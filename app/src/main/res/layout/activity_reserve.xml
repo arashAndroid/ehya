@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.mrehya.Reserve"
+    android:background="@color/colorBg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp">
+
+        <ImageButton
+            android:id="@+id/btn_prev_month"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/prev3"
+            android:onClick="prev_month"
+            android:background="@color/colorBg"/>
+
+        <TextView
+            android:id="@+id/tv_month"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=""
+            android:gravity="center"
+            android:textColor="#5975d4"/>
+
+        <ImageButton
+            android:id="@+id/btn_next_month"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/next3"
+            android:onClick="next_month"
+            android:background="@color/colorBg"/>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/hsv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+
+            <com.goodiebag.horizontalpicker.HorizontalPicker
+            android:id="@+id/hpicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:textSize="18sp"
+            app:itemMargin="5dp"
+            app:itemHeight="40dp"
+            app:itemWidth="40dp"
+            app:backgroundSelector="@drawable/selector_background_example"
+            app:textColorSelector="@color/selector_text_view"
+            app:theme="@style/AppTheme"/>
+
+
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp">
+
+        <Button
+            android:id="@+id/btntime"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="35dp"
+            android:background="@drawable/today_time_btn"
+            android:textColor="@android:color/white"
+            android:text="امروز"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:onClick="go_today"
+            />
+
+        <Button
+            android:id="@+id/btn_firsttime"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="40dp"
+            android:background="@drawable/first_time_btn"
+            android:text="اولین وقت خالی"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:onClick="go_firsttime"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:paddingTop="50dp"
+        android:paddingBottom="25dp">
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="false"
+            android:layout_centerVertical="false">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_H_1"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="۸:۳۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="1"/>
+
+                <Button
+                    android:id="@+id/btn_H_2"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="۹:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="2"/>
+
+                <Button
+                    android:id="@+id/btn_H_3"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="۹:۳۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="3"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_H_4"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="۱۰:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="4"/>
+
+                <Button
+                    android:id="@+id/btn_H_5"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="۱۰:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="5"/>
+
+                <Button
+                    android:id="@+id/btn_H_6"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="۱۰:۳۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="6"/>
+            </TableRow>
+
+            <TextView
+                android:id="@+id/tv_time_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="تمام وقت ها پر می باشد"
+                android:gravity="center"
+                android:visibility="gone"
+                android:onClick="reserve"
+                />
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_H_7"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="۱۱:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="7"/>
+
+                <Button
+                    android:id="@+id/btn_H_8"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="۱۱:۳۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="8"/>
+
+                <Button
+                    android:id="@+id/btn_H_9"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="۱۲:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="9"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_H_10"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="۱۶:۳۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="10"/>
+
+                <Button
+                    android:id="@+id/btn_H_11"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="۱۷:۰۰"
+                    android:onClick="reserve"
+                    android:textSize="20dp"
+                    android:tag="11"/>
+
+                <Button
+                    android:id="@+id/btn_H_12"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="۱۷:۳۰"
+                    android:onClick="reserve"
+                    android:textSize="20dp"
+                    android:tag="12"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_H_13"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="۱۸:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="13"/>
+
+                <Button
+                    android:id="@+id/btn_H_14"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="۱۸:۳۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="14"/>
+
+                <Button
+                    android:id="@+id/btn_H_15"
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="۱۹:۰۰"
+                    android:textSize="20dp"
+                    android:onClick="reserve"
+                    android:tag="15"/>
+            </TableRow>
+        </TableLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

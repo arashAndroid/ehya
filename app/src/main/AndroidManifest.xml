@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mrehya">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".AppController"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Language">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".MakeResume"
+            android:windowSoftInputMode="stateHidden"/>
+        <!-- scheduler -->
+        <receiver
+            android:name=".AlarmNotifReciever"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <!-- Alarm scheduler -->
+        <service android:name=".Alarm_BackgroundService" />
+
+        <receiver android:name=".AlarmReceiver" />
+
+        <activity android:name=".Reserve" />
+        <activity android:name=".MedicalService" />
+        <activity android:name=".LoginOrSignup" />
+        <activity android:name=".Signup" />
+        <activity android:name=".Login" />
+        <activity android:name=".Cart" />
+        <activity android:name=".Shop" />
+        <activity android:name=".ShowProduct" />
+        <activity android:name=".Test" />
+        <activity android:name=".ChooseExam" />
+        <activity android:name=".ExamEnd" />
+        <activity android:name=".ShowPurchase" />
+        <activity android:name=".ShowHireStatus" />
+        <activity android:name=".Settings" />
+        <activity android:name=".AboutUs"></activity>
+    </application>
+
+</manifest>

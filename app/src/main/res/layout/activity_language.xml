@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_language"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/LanguageBG"
+    tools:context="com.mrehya.Language">
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/logo_persian"
+            android:scaleType="fitCenter"
+            android:layout_width="100dp"
+            android:layout_height="130dp" />
+        <com.mrehya.MyTextView
+            android:layout_marginTop="20dp"
+            android:textSize="@dimen/textSize1"
+            android:textColor="@color/textColorWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="@color/textShadowColor"
+            android:shadowRadius="5"
+            android:shadowDy="5"
+            android:text="لطفا زبان مورد نظر خود را انتخاب نمایید."/>
+        <com.mrehya.MyTextView
+            android:layout_marginTop="5dp"
+            android:textSize="@dimen/textSize2"
+            android:textColor="@color/textColorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please select your language"/>
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_height="55dp">
+            <ImageButton
+                android:id="@+id/imgBtnEnglish"
+                android:padding="4dp"
+                android:src="@drawable/uk_flag"
+                android:scaleType="fitXY"
+                android:background="@drawable/left_lang_button"
+                android:layout_width="0dp"
+                android:layout_weight="0.20"
+                android:layout_height="match_parent" />
+            <Button
+                android:textSize="@dimen/textSize1"
+                android:id="@+id/btnEnglish"
+                android:text="English"
+                android:textAllCaps="false"
+                android:background="@drawable/right_lang_button"
+                android:layout_width="0dp"
+                android:layout_weight="0.80"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_height="55dp">
+            <ImageButton
+                android:id="@+id/imgBtnPersian"
+                android:padding="4dp"
+                android:src="@drawable/flag_of_iran"
+                android:scaleType="fitXY"
+                android:background="@drawable/left_lang_button"
+                android:layout_width="0dp"
+                android:layout_weight="0.20"
+                android:layout_height="match_parent" />
+            <Button
+                android:textAllCaps="false"
+                android:textSize="@dimen/textSize1"
+                android:id="@+id/btnPersian"
+                android:text="Persian"
+                android:background="@drawable/right_lang_button"
+                android:layout_width="0dp"
+                android:layout_weight="0.80"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </LinearLayout>
+    <com.mrehya.MyTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="نسخه‌ی ۱٫۳"
+        android:textColor="@color/textColorBlack"
+        android:textSize="@dimen/textSize1"
+        android:layout_margin="10dp"
+        />
+</RelativeLayout>
