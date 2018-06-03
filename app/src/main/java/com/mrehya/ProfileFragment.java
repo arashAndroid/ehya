@@ -410,7 +410,7 @@ public class ProfileFragment extends Fragment {
                         zip = c.getString("postal_code");
                         password = passwordd;
                         session.setLogin(true);
-                        session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password);
+                        session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,"0");
                         pDialog_updateuserinfo.setProgress(50);
                         if(dialog != null)
                             update_user(token, dialog);
@@ -490,7 +490,7 @@ public class ProfileFragment extends Fragment {
                                 c.getString("first_name"), c.getString("last_name"),
                                 c.getString("email"),c.getString("tel_number"),
                                 newtoken, session.getUserDetails().getImage(),c.getString("mobile"),
-                                c.getString("address"),c.getString("postal_code"), session.getUserDetails().getPassword());
+                                c.getString("address"),c.getString("postal_code"), session.getUserDetails().getPassword(),"0");
 
                         if(dialog.isShowing())
                             dialog.dismiss();

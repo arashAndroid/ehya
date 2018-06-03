@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ehya.iml" filepath="$PROJECT_DIR$/.idea/ehya.iml" />
-      <module fileurl="file://C:\Users\BlackTears\Desktop\ehyagit\ehya\.idea\mrehya.iml" filepath="C:\Users\BlackTears\Desktop\ehyagit\ehya\.idea\mrehya.iml" />
     </modules>
   </component>
 </project>

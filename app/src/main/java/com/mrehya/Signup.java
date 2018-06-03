@@ -492,7 +492,7 @@ public class Signup extends AppCompatActivity {
                         zip = c.getString("postal_code");
                         password = passwordd;
                         session.setLogin(true);
-                        session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password);
+                        session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,"0");
                         //hideDialog();
                     } else {
                         Log.d("TAG", "failed to get user");
