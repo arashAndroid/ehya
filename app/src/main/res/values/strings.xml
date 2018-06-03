@@ -348,5 +348,15 @@
         <item>کارآموزی</item>
     </string-array>
 
+    <!--MAKE RESUMe-->
+    <!--mahmoood-->
+    <string-array name="benefitArray">
+        <item>امکان ترفیع سمت</item>
+        <item>بیمه</item>
+        <item>دوره‌های آموزشی</item>
+        <item>غذا به عهده‌ی شرکت</item>
+        <item>ساعت کاری منعطف</item>
+        <item>سرویس رفت و‌آمد</item>
+    </string-array>
 
 </resources>

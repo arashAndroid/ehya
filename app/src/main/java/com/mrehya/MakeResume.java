@@ -64,6 +64,7 @@ public class MakeResume extends AppCompatActivity {
     ArrayList<String> listTerms;
     ArrayList<String> listSkill;
 
+
     ArrayList<String> listProes;
     ArrayList<Lang> listLang;
     ArrayList<Job> listJobs;
@@ -107,8 +108,8 @@ public class MakeResume extends AppCompatActivity {
     LinearLayout LinearLayoutMakeResume, LinearLayoutresumepart1,LinearLayoutresumepart2,LinearLayoutresumepart3
             ,LinearLayoutresumepart4,LinearLayoutresumepart5
             ,LinearLayoutresumepart6,LinearLayoutresumepart7,LinearLayoutresumepart8,
-    LinearLayoutresumepart9,LinearLayoutresumepart10,LinearLayoutresumepart11
-    ,LinearLayoutresumepart12, LinearLayoutresumepart13,LinearLayoutresumepart14;
+            LinearLayoutresumepart9,LinearLayoutresumepart10,LinearLayoutresumepart11
+            ,LinearLayoutresumepart12, LinearLayoutresumepart13,LinearLayoutresumepart14;
     ImageView resumeProfilePic;
 
 
@@ -117,7 +118,7 @@ public class MakeResume extends AppCompatActivity {
 
     Spinner spinnerDesiredIncome;
 
-       //DIALOG PERSONAL INFO
+    //DIALOG PERSONAL INFO
     TextView txtPIEditPersonalInfo, txtPIEmailAddress,
             txtPIMobile, txtPIProvince, txtPIBirthYear, txtPIAddress, txtPIMarital, txtPIGender, txtPIMilitaryservice;
     EditText txtPIEditEmailAddress,txtPIEditMobile,txtPIEditProvince,txtPIEditBirthYear,txtPIEditAddress;
@@ -134,6 +135,7 @@ public class MakeResume extends AppCompatActivity {
     List<String> Seniority_arrays;
     List<String> JobStatus_arrays;
     List<String> Salary_arrays;
+    List<String> BenefitsArray;
 
     //progress
     private ProgressDialog StartDialog;
@@ -178,6 +180,8 @@ public class MakeResume extends AppCompatActivity {
         Seniority_arrays= Arrays.asList(resources.getStringArray(R.array.Senority_arrays));
         JobStatus_arrays= Arrays.asList(resources.getStringArray(R.array.job_status_arrays));
         Salary_arrays= Arrays.asList(resources.getStringArray(R.array.DesiredIncome_arrays));
+        BenefitsArray= Arrays.asList(resources.getStringArray(R.array.benefitArray));
+
 
     }
     public void start(){
@@ -372,7 +376,7 @@ public class MakeResume extends AppCompatActivity {
 
 
     }
-//    public  void setValues(){
+    //    public  void setValues(){
 //
 //    }
     private void setViews(){
@@ -406,7 +410,7 @@ public class MakeResume extends AppCompatActivity {
         btnSavechanges = (Button) findViewById(R.id.btnSavechanges);
         btnSaveAboutMe = (Button) findViewById(R.id.btnSaveAboutMe);
         btnEditPersonal= (Button) findViewById(R.id.btnEditPersonal);
-       // txtSalary = (TextView) findViewById(R.id.txtSalary);
+        // txtSalary = (TextView) findViewById(R.id.txtSalary);
         txtAboutMe = (TextView) findViewById(R.id.txtAboutMe);
 
 
@@ -506,9 +510,9 @@ public class MakeResume extends AppCompatActivity {
 //        listProvince.add("زنگان");
 
 
- //       listJobcat.add("دسته");
+        //       listJobcat.add("دسته");
         //listTerms.add("تماموقت۱");
-   //     listSkill.add("مدیر");
+        //     listSkill.add("مدیر");
     }
 
     //****Setting the List Items****//
@@ -979,7 +983,7 @@ public class MakeResume extends AppCompatActivity {
                     listAdapterTerms.notifyDataSetChanged();
                     justifyListViewHeightBasedOnChildren(listView);
                 }
-                    dialog.dismiss();
+                dialog.dismiss();
 
             }
         });
@@ -1084,7 +1088,7 @@ public class MakeResume extends AppCompatActivity {
         txtedit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // txtSalary.setText(txtEditDialogAbout.getText().toString());
+                // txtSalary.setText(txtEditDialogAbout.getText().toString());
                 txtAboutMe.setText(txtEditDialogAbout.getText());
                 dialog.dismiss();
             }
@@ -1328,18 +1332,18 @@ public class MakeResume extends AppCompatActivity {
     }
     public void Set_Texts(String Language, Resources resources, int api){
 
-    chkPromo.setText(resources.getString(R.string.chkPromo));
-    chkInsur.setText(resources.getString(R.string.chkInsur));
-    chkTrainingCourse.setText(resources.getString(R.string.chkTrainingCourse));
-    chkTransporting.setText(resources.getString(R.string.chkTransporting));
-    chkFood.setText(resources.getString(R.string.chkFood));
-    chkFlexiableHours.setText(resources.getString(R.string.chkFlexiableHours));
-    //Buttons
-    btnSavechanges.setText(resources.getString(R.string.SaveChanges2));
-    btnSaveAboutMe.setText(resources.getString(R.string.AboutMe));
-   // txtSalary.setText(resources.getString(R.string.Salary));
-    txtAboutMe.setText(resources.getString(R.string.AboutMe));
-    txtSlugTitle.setText(resources.getString(R.string.SlugTitle));
+        chkPromo.setText(resources.getString(R.string.chkPromo));
+        chkInsur.setText(resources.getString(R.string.chkInsur));
+        chkTrainingCourse.setText(resources.getString(R.string.chkTrainingCourse));
+        chkTransporting.setText(resources.getString(R.string.chkTransporting));
+        chkFood.setText(resources.getString(R.string.chkFood));
+        chkFlexiableHours.setText(resources.getString(R.string.chkFlexiableHours));
+        //Buttons
+        btnSavechanges.setText(resources.getString(R.string.SaveChanges2));
+        btnSaveAboutMe.setText(resources.getString(R.string.AboutMe));
+        // txtSalary.setText(resources.getString(R.string.Salary));
+        txtAboutMe.setText(resources.getString(R.string.AboutMe));
+        txtSlugTitle.setText(resources.getString(R.string.SlugTitle));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if(Language.equals("fa")){
@@ -1354,110 +1358,110 @@ public class MakeResume extends AppCompatActivity {
             }
         }
 
-    //job_status_arrays
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            resources.getStringArray(R.array.job_status_arrays)
-    );
-    spinnerjob_status.setAdapter(adapter);
+        //job_status_arrays
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                resources.getStringArray(R.array.job_status_arrays)
+        );
+        spinnerjob_status.setAdapter(adapter);
 
 
-    //certificate_arrays
-    ArrayAdapter<String> certificateadapter = new ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            resources.getStringArray(R.array.certificate_arrays)
-    );
-    spinnerLastDegree.setAdapter(certificateadapter);
+        //certificate_arrays
+        ArrayAdapter<String> certificateadapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                resources.getStringArray(R.array.certificate_arrays)
+        );
+        spinnerLastDegree.setAdapter(certificateadapter);
 
 
-    ArrayAdapter<String> DesiredIncomeadapter = new ArrayAdapter<String>(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            resources.getStringArray(R.array.DesiredIncome_arrays)
-    );
-    spinnerDesiredIncome.setAdapter(DesiredIncomeadapter);
+        ArrayAdapter<String> DesiredIncomeadapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                resources.getStringArray(R.array.DesiredIncome_arrays)
+        );
+        spinnerDesiredIncome.setAdapter(DesiredIncomeadapter);
 
 
-    //new
-    if(api==17  || Language.equals("fa")){
-        txtJobTitleTitle.setText(resources.getString(R.string.JobTitle2));
+        //new
+        if(api==17  || Language.equals("fa")){
+            txtJobTitleTitle.setText(resources.getString(R.string.JobTitle2));
 
-        txtjob_status.setText(resources.getString(R.string.job_status));
+            txtjob_status.setText(resources.getString(R.string.job_status));
 
-        txtLastDegreeTitle.setText(resources.getString(R.string.LastDegree));
+            txtLastDegreeTitle.setText(resources.getString(R.string.LastDegree));
 
-        txtEmailAddress.setText(resources.getString(R.string.EmailAddress));
-        txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddressTitle));
+            txtEmailAddress.setText(resources.getString(R.string.EmailAddress));
+            txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddressTitle));
 
-        txtPhone.setText(resources.getString(R.string.Phone));
-        txtPhoneTitle.setText(resources.getString(R.string.PhoneTitle));
+            txtPhone.setText(resources.getString(R.string.Phone));
+            txtPhoneTitle.setText(resources.getString(R.string.PhoneTitle));
 
-        txtProvinceResume.setText(resources.getString(R.string.ProvinceResume));
-        txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResumeTitle));
+            txtProvinceResume.setText(resources.getString(R.string.ProvinceResume));
+            txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResumeTitle));
 
-        txtMarriageResume.setText(resources.getString(R.string.MarriageResume));
-        txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResumeTitle));
-
-
-        txtBirthYearResume.setText(resources.getString(R.string.BirthYearResume));
-        txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResumeTitle));
-
-        txtDutyResume.setText(resources.getString(R.string.DutyResume));
-        txtDutyResumeTitle.setText(resources.getString(R.string.DutyResumeTitle));
-
-        txtAddressResume.setText(resources.getString(R.string.AddressResume));
-        txtAddressResumeTitle.setText(resources.getString(R.string.AddressResumeTitle));
-    }
-    else{
-        txtJobTitleTitle.setText(resources.getString(R.string.JobTitle2));
-
-        txtjob_status.setText(resources.getString(R.string.job_status));
-
-        txtLastDegreeTitle.setText(resources.getString(R.string.LastDegree));
-
-        txtEmailAddress.setText(resources.getString(R.string.EmailAddressTitle));
-        txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddress));
-
-        txtPhone.setText(resources.getString(R.string.PhoneTitle));
-        txtPhoneTitle.setText(resources.getString(R.string.Phone));
-
-        txtProvinceResume.setText(resources.getString(R.string.ProvinceResumeTitle));
-        txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResume));
-
-        txtMarriageResume.setText(resources.getString(R.string.MarriageResumeTitle));
-        txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResume));
-
-        txtBirthYearResume.setText(resources.getString(R.string.BirthYearResumeTitle));
-        txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResume));
-
-        txtDutyResume.setText(resources.getString(R.string.DutyResumeTitle));
-        txtDutyResumeTitle.setText(resources.getString(R.string.DutyResume));
-
-        txtAddressResume.setText(resources.getString(R.string.AddressResumeTitle));
-        txtAddressResumeTitle.setText(resources.getString(R.string.AddressResume));
-    }
+            txtMarriageResume.setText(resources.getString(R.string.MarriageResume));
+            txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResumeTitle));
 
 
-    btnEditPersonal.setText(resources.getString(R.string.Edit));
-    txtPrivateInfo.setText(resources.getString(R.string.PrivateInfo));
-    txtTalents.setText(resources.getString(R.string.Talents));
-    txtJobExp.setText(resources.getString(R.string.JobExp));
-    txtGraduateExp.setText(resources.getString(R.string.GraduateExp));
-    txtLanguages.setText(resources.getString(R.string.Languages));
-    txtJobFavorites.setText(resources.getString(R.string.JobFavorites));
-    txtSelectedProvinces.setText(resources.getString(R.string.SelectedProvinces));
-    txtJobCategory.setText(resources.getString(R.string.JobCategory));
-    txtAcceptedContract.setText(resources.getString(R.string.AcceptedContract));
-    txtActivityLevel.setText(resources.getString(R.string.ActivityLevel));
-    txtActualRights.setText(resources.getString(R.string.ActualRights));
+            txtBirthYearResume.setText(resources.getString(R.string.BirthYearResume));
+            txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResumeTitle));
+
+            txtDutyResume.setText(resources.getString(R.string.DutyResume));
+            txtDutyResumeTitle.setText(resources.getString(R.string.DutyResumeTitle));
+
+            txtAddressResume.setText(resources.getString(R.string.AddressResume));
+            txtAddressResumeTitle.setText(resources.getString(R.string.AddressResumeTitle));
+        }
+        else{
+            txtJobTitleTitle.setText(resources.getString(R.string.JobTitle2));
+
+            txtjob_status.setText(resources.getString(R.string.job_status));
+
+            txtLastDegreeTitle.setText(resources.getString(R.string.LastDegree));
+
+            txtEmailAddress.setText(resources.getString(R.string.EmailAddressTitle));
+            txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddress));
+
+            txtPhone.setText(resources.getString(R.string.PhoneTitle));
+            txtPhoneTitle.setText(resources.getString(R.string.Phone));
+
+            txtProvinceResume.setText(resources.getString(R.string.ProvinceResumeTitle));
+            txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResume));
+
+            txtMarriageResume.setText(resources.getString(R.string.MarriageResumeTitle));
+            txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResume));
+
+            txtBirthYearResume.setText(resources.getString(R.string.BirthYearResumeTitle));
+            txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResume));
+
+            txtDutyResume.setText(resources.getString(R.string.DutyResumeTitle));
+            txtDutyResumeTitle.setText(resources.getString(R.string.DutyResume));
+
+            txtAddressResume.setText(resources.getString(R.string.AddressResumeTitle));
+            txtAddressResumeTitle.setText(resources.getString(R.string.AddressResume));
+        }
+
+
+        btnEditPersonal.setText(resources.getString(R.string.Edit));
+        txtPrivateInfo.setText(resources.getString(R.string.PrivateInfo));
+        txtTalents.setText(resources.getString(R.string.Talents));
+        txtJobExp.setText(resources.getString(R.string.JobExp));
+        txtGraduateExp.setText(resources.getString(R.string.GraduateExp));
+        txtLanguages.setText(resources.getString(R.string.Languages));
+        txtJobFavorites.setText(resources.getString(R.string.JobFavorites));
+        txtSelectedProvinces.setText(resources.getString(R.string.SelectedProvinces));
+        txtJobCategory.setText(resources.getString(R.string.JobCategory));
+        txtAcceptedContract.setText(resources.getString(R.string.AcceptedContract));
+        txtActivityLevel.setText(resources.getString(R.string.ActivityLevel));
+        txtActualRights.setText(resources.getString(R.string.ActualRights));
 //    txtSalary.setText(resources.getString(R.string.Salary));
-    txtJobBenefits.setText(resources.getString(R.string.JobBenefits));
-    txtAboutMe2.setText(resources.getString(R.string.AboutMe2));
-    txtGenderResumeTitle.setText(resources.getString(R.string.GenderResumeTitle));
-    txtGenderResume.setText(resources.getString(R.string.GenderResume));
-}
+        txtJobBenefits.setText(resources.getString(R.string.JobBenefits));
+        txtAboutMe2.setText(resources.getString(R.string.AboutMe2));
+        txtGenderResumeTitle.setText(resources.getString(R.string.GenderResumeTitle));
+        txtGenderResume.setText(resources.getString(R.string.GenderResume));
+    }
 
     public void update_personal_info_dialog(String Language){
 
@@ -1549,11 +1553,14 @@ public class MakeResume extends AppCompatActivity {
                         mobile = c.getString("mobile");
                         address = c.getString("address");
                         zip = c.getString("postal_code");
-                        resume = c.getString("resumeId");
+                        if(c.has("resumeId"))
+                            resume =c.getString("resumeid");
+                        else
+                            resume =c.getString(null);
                         password = passwordd;
                         session.setLogin(true);
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password
-                        ,resume);
+                                ,resume);
 
                     } else {
                         Log.d("TAG", "failed to get user");
@@ -1625,7 +1632,7 @@ public class MakeResume extends AppCompatActivity {
                         //txtEmptyHires.setVisibility(View.GONE);
                         for (int i = 0; i < data.length(); i++) {
                             JobcatsMap.put(data.getJSONObject(i).getString("title")
-                            , data.getJSONObject(i).getInt("id"));
+                                    , data.getJSONObject(i).getInt("id"));
                         }
                     }
                     Log.d("TAG", "No Object recieved!");
@@ -1661,17 +1668,17 @@ public class MakeResume extends AppCompatActivity {
 
 
 
-        //
-        //    sending properties
-        //    txtJobTitle EdittxtSlug spinnerjob_status spinnerLastDegree txtEmailAddress txtPhone
-        //    txtProvinceResume txtMarriageResume txtGenderResume txtBirthYearResume txtDutyResume txtAddressResume
-        //    skills:listProes
-        //
-        //
-        //    sending properties
-        //    txtJobTitle EdittxtSlug spinnerjob_status spinnerLastDegree txtEmailAddress txtPhone
-        //    txtProvinceResume txtMarriageResume txtGenderResume txtBirthYearResume txtDutyResume txtAddressResume
-        //    skills:listProes
+    //
+    //    sending properties
+    //    txtJobTitle EdittxtSlug spinnerjob_status spinnerLastDegree txtEmailAddress txtPhone
+    //    txtProvinceResume txtMarriageResume txtGenderResume txtBirthYearResume txtDutyResume txtAddressResume
+    //    skills:listProes
+    //
+    //
+    //    sending properties
+    //    txtJobTitle EdittxtSlug spinnerjob_status spinnerLastDegree txtEmailAddress txtPhone
+    //    txtProvinceResume txtMarriageResume txtGenderResume txtBirthYearResume txtDutyResume txtAddressResume
+    //    skills:listProes
 
     public String MakeCheckString(){
         String chks="";
@@ -1693,8 +1700,7 @@ public class MakeResume extends AppCompatActivity {
     public String  SplitTerms() {
         String splitetTerm="";
         String last="";
-        for (String itme: listTerms
-                ) {
+        for (String itme: listTerms) {
             splitetTerm+=itme+",";
         }
 
@@ -1706,10 +1712,10 @@ public class MakeResume extends AppCompatActivity {
     public String  SplitListProvince() {
 
 
-            String splitetTerm="";
-            String last="";
+        String splitetTerm="";
+        String last="";
         for (String itme: listProvince
-             ) {
+                ) {
             splitetTerm+=itme+",";
         }
 
@@ -1783,7 +1789,7 @@ public class MakeResume extends AppCompatActivity {
                 params.put("Resume[sex]",Gender_arrays.indexOf(txtGenderResume.getText())+1+"");
                 params.put("Resume[job_status]",JobStatus_arrays.indexOf( txtjob_status.getText().toString())+1+"");
                 if (!(txtDutyResume.getText()==null))
-                params.put("Resume[military_status]",Militaryservice_arrays.indexOf(txtDutyResume.getText())+1+"" );
+                    params.put("Resume[military_status]",Militaryservice_arrays.indexOf(txtDutyResume.getText())+1+"" );
                 params.put("Resume[about_me]",txtAboutMe.getText().toString() );
                 params.put("Resume[provinces][] ",SplitListProvince());
                 params.put("Resume[skills]",txtTalents.getText().toString() );
@@ -1982,6 +1988,8 @@ public class MakeResume extends AppCompatActivity {
                           String academics,
                           String languages){
 
+
+
         txtEmailAddress.setText(email);
         txtPhone.setText(mobile);
         txtProvinceResume.setText(province);
@@ -2010,23 +2018,61 @@ public class MakeResume extends AppCompatActivity {
         spinnerjob_status.setSelection(result);
 
 
-//
-//        R.id.txtMobile);txtPhone
-//        (R.id.txtProvince);
-//        (R.id.txtBirthYear);
-//        (R.id.txtAddress);
-//        (R.id.txtMarital);
-//        txtGenderResume.setText(sex);
-//        txtMilitaryservice.setT
-//        (R.id.txtEditEmailAddress);
-//        (R.id.txtEditMobile);
-//        (R.id.txtEditBirthYear);
-//        (R.id.txtEditAddress);
-//        R.id.spinnerMarital);
-//        R.id.spinnerGender);
-//        R.id.spinnerMilitaryservice);
-//        (R.id.spinnerPIProvince);
-//.id.btn_save_editpersoalinfo)
+        int stringSalary = Integer.parseInt(salary);
+        spinnerDesiredIncome.setSelection(stringSalary);
+
+        //benefits checkboxes
+        String s1 = benefits;
+        String[] words=s1.split(",");
+
+        for (String item:words
+                ) {
+//            BenefitsArray.contains(item);
+            if (item == "امکان ترفیع سمت"){
+                chkPromo.setChecked(true);
+            }else if(item == "بیمه"){
+                chkInsur.setChecked(true);
+            }else if(item == "دوره\u200Cهای آموزشی"){
+                chkTrainingCourse.setChecked(true);
+            }else if(item == "غذا به عهده\u200Cی شرکت"){
+                chkFood.setChecked(true);
+            }else if(item == "ساعت کاری منعطف"){
+                chkFlexiableHours.setChecked(true);
+            }else if(item == "سرویس رفت و\u200Cآمد"){
+                chkTransporting.setChecked(true);
+            }
+        }
+
+        //Provinces
+        String s2 = provinces;
+        String[] words2=s1.split(",");
+
+        for (int i=0 ; i< words2.length ;i++){
+            try {
+                listProvince.add(skills.getString(i));
+                listAdapterProvince.notifyDataSetChanged();
+                //justify what
+                justifyListViewHeightBasedOnChildren(listViewProvince);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        //contracts
+        String s3 = contracts;
+        String[] words3=s1.split(",");
+
+        for (int i=0 ; i< words3.length ;i++){
+            try {
+                listTerms.add(skills.getString(i));
+                listAdapterTerms.notifyDataSetChanged();
+                //justify what
+                justifyListViewHeightBasedOnChildren(listViewTerms);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
