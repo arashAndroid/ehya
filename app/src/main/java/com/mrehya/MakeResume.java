@@ -37,6 +37,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.mrehya.Helper.LocaleHelper;
 
@@ -1797,7 +1798,8 @@ public class MakeResume extends AppCompatActivity {
                 params.put("Resume[benefits][]",MakeCheckString());
                 if (listSkill.size()!=0)
                     params.put("Resume[levels]",Seniority_arrays.indexOf(listSkill.get(0))+1+"" );
-                params.put("Resume[slug]",txtSlugTitle.toString() );
+                params.put("Resume[slug]",EdittxtSlug.getText().toString() );
+                Log.d("TAG", "sluuuuuuug: "+EdittxtSlug.getText().toString());
                 params.put("categories","1,2");
                 params.put("Resume[salary]",Salary_arrays.indexOf(spinnerDesiredIncome.getSelectedItem().toString())+1+"" );
                 params.put("Resume[addressaddress]",txtAddressResume.getText().toString() );
@@ -1988,7 +1990,11 @@ public class MakeResume extends AppCompatActivity {
                           String academics,
                           String languages){
 
-
+        Glide.with(getApplicationContext())
+                .load(image)
+                .placeholder(R.drawable.logo_eng)
+                .error(R.drawable.logo_eng)
+                .into(resumeProfilePic);
 
         txtEmailAddress.setText(email);
         txtPhone.setText(mobile);
