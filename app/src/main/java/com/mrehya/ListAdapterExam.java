@@ -5,16 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.mrehya.Helper.LocaleHelper;
 
 import java.util.ArrayList;
@@ -25,15 +30,32 @@ import io.paperdb.Paper;
  * Created by sdfsdfasf on 2/27/2018.
  */
 
-public class ListAdapterExam extends BaseAdapter implements ListAdapter {
+public class ListAdapterExam extends RecyclerView.Adapter<ListAdapterExam.MyViewHolder> {
 
     private ArrayList<Exam> list = new ArrayList<Exam>();
     private Context context;
     private Activity activity;
+    public ImageButton imgbtnLogo;
+    public RelativeLayout LinearLayoutchooseexam1;
+    public TextView txtTitle,txtPrice;
 
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+
+        public ImageButton imgbtnLogo;
+        public RelativeLayout LinearLayoutchooseexam1;
+        public TextView txtTitle,txtPrice;
+        public MyViewHolder(View view) {
+            super(view);
+            setIsRecyclable(false);
+            imgbtnLogo =view.findViewById(R.id.imgbtnLogo);
+            LinearLayoutchooseexam1= view.findViewById(R.id.LinearLayoutchooseexam1);
+            txtTitle=view.findViewById(R.id.txtTitle);
+            txtPrice=view.findViewById(R.id.txtPrice);
+        }
+    }
     //new
-    LinearLayout LinearLayoutchooseexam1;
-    TextView txtTitle,txtMinute,txtQuestion;
+
 
     public ListAdapterExam(ArrayList<Exam> list, Context context, Activity activity) {
         this.list = list;
@@ -42,101 +64,87 @@ public class ListAdapterExam extends BaseAdapter implements ListAdapter {
     }
 
     @Override
-    public int getCount() {
+    public int getItemCount() {
         return list.size();
     }
 
-    @Override
-    public Object getItem(int pos) {
-        return list.get(pos);
-    }
 
     @Override
     public long getItemId(int pos) {
         return pos;
         //just return 0 if your list items do not have an Id variable.
     }
-
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.list_item_exam, null);
-        }
-
-        //Handle TextView and display string from your list
-        TextView listItemText = (TextView)view.findViewById(R.id.txtTitle);
-        listItemText.setText(list.get(position).getName());
-
-
-        TextView txtQCount = (TextView)view.findViewById(R.id.txtQCount);
-        txtQCount.setText(String.valueOf( list.get(position).getqCount()));
-
-        TextView txtTime = (TextView)view.findViewById(R.id.txtTime);
-        txtTime.setText(String.valueOf( list.get(position).getTime()));
-
-        //Handle buttons and add onClickListeners
-        ImageButton imgbtnLogo =view.findViewById(R.id.imgbtnLogo);
-
-        imgbtnLogo.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //do something
-                Intent intent = new Intent(activity,Test.class);
-                intent.putExtra("examId",list.get(position).getId());
-                context.startActivity(intent);
-                notifyDataSetChanged();
-            }
-        });
-
-        txtTime.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //do something
-                Intent intent = new Intent(activity,Test.class);
-                intent.putExtra("examId",list.get(position).getId());
-                context.startActivity(intent);
-                notifyDataSetChanged();
-            }
-        });
-
-        txtQCount.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //do something
-                Intent intent = new Intent(activity,Test.class);
-                intent.putExtra("examId",list.get(position).getId());
-                context.startActivity(intent);
-                notifyDataSetChanged();
-            }
-        });
-
-        listItemText.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //do something
-                Intent intent = new Intent(activity,Test.class);
-                intent.putExtra("examId",list.get(position).getId());
-                context.startActivity(intent);
-                notifyDataSetChanged();
-            }
-        });
+    public ListAdapterExam.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_item_exam, parent, false);
 
 
         //new
-        LinearLayoutchooseexam1=view.findViewById(R.id.LinearLayoutchooseexam1);
-        txtMinute=view.findViewById(R.id.txtMinute);
-        txtTitle=view.findViewById(R.id.txtTitle);
-        txtQuestion=view.findViewById(R.id.txtQuestion);
         Paper.init(context);
-        updateView(updatelanguage(context));
+        imgbtnLogo =itemView.findViewById(R.id.imgbtnLogo);
+        LinearLayoutchooseexam1=itemView.findViewById(R.id.LinearLayoutchooseexam1);
+        txtTitle=itemView.findViewById(R.id.txtTitle);
+        txtPrice=itemView.findViewById(R.id.txtPrice);
+        String Language = updatelanguage(context);
+        updateView(Language);
 
-
-
-
-        return view;
+        return new ListAdapterExam.MyViewHolder(itemView);
     }
+    @Override
+    public void onBindViewHolder(final ListAdapterExam.MyViewHolder holder, final int position) {
+        final Exam exam = list.get(position);
+
+
+        Glide.with(context)
+                .load(list.get(position).getImage())
+                .placeholder(R.drawable.logo_persian)
+                .error(R.drawable.logo_persian_placeholder)
+                .into(holder.imgbtnLogo);
+
+        //Handle TextView and display string from your list
+        holder.txtTitle.setText(exam.getName());
+
+        holder.txtPrice.setText(exam.getPrice());
+
+        /*TextView txtQCount = (TextView)view.findViewById(R.id.txtQCount);
+        txtQCount.setText(String.valueOf( list.get(position).getqCount()));*/
+
+       /* TextView txtTime = (TextView)view.findViewById(R.id.txtTime);
+        txtTime.setText(String.valueOf( list.get(position).getTime()));*/
+
+        //Handle buttons and add onClickListeners
+
+
+        holder.imgbtnLogo.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //do something
+                Intent intent = new Intent(activity,Test.class);
+                intent.putExtra("examId",exam.getId());
+                context.startActivity(intent);
+                notifyDataSetChanged();
+            }
+        });
+
+
+
+        holder.txtTitle.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //do something
+                Intent intent = new Intent(activity,Test.class);
+                intent.putExtra("examId",exam.getId());
+                context.startActivity(intent);
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+
+
+
+
     private String updatelanguage(Context context){
         Paper.init(context);
         //Default language is fa
@@ -166,10 +174,7 @@ public class ListAdapterExam extends BaseAdapter implements ListAdapter {
             txtTitle.setGravity(Gravity.LEFT | Gravity.CENTER);
             txtTitle.setPadding(10,15,0,15);
         }
-        txtTitle.setText(resources.getString(R.string.Exam));
 
-        txtQuestion.setText(resources.getString(R.string.Question));
-        txtMinute.setText(resources.getString(R.string.Minute));
         //txtMinute.setTextSize(@dimen/textSize1);
     }
 

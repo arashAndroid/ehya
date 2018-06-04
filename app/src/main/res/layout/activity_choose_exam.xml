@@ -21,15 +21,21 @@
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
-    <ListView
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+    <com.mrehya.MyTextView
+        android:id="@+id/txtEmptyExams"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="لیست آزمون‌ها خالی است"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="20dp"/>
+    <android.support.v7.widget.RecyclerView
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:id="@+id/listViewExams"
-        android:divider="@null"
-        android:dividerHeight="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

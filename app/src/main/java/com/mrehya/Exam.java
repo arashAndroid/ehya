@@ -10,7 +10,7 @@ public class Exam {
     private int qCount;
     private int id;
     private int time;
-
+    private String image;
     public int getId() {
         return id;
     }
@@ -63,13 +63,44 @@ public class Exam {
 
     private String description;
     private ArrayList<Question> questions =new ArrayList<Question>();
+    private String price;
 
+    public void setqCount(int qCount) {
+        this.qCount = qCount;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public Exam(int id, String name, String description, String price, String image) {
+
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.image = image;
+    }
+
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Exam(int id, int time, String name, String description) {
         this.id = id;
         this.time = time;
         this.name = name;
         this.description = description;
+
     }
 
 
