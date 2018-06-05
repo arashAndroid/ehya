@@ -13,6 +13,6 @@ public class AboutUs extends AppCompatActivity {
         //hello from john cena
 //         String str = "";----------------
         //teamviewer
-        String str = " 1235678";
+        String str = " 345";
     }
 }
