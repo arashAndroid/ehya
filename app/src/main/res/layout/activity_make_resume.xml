@@ -97,7 +97,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="top"
-                        android:text="عنوان شغلی: " />
+                        android:text="اسلاگ: " />
 
                 </LinearLayout>
 
@@ -113,21 +113,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:prompt="@string/job_status"
                         android:layoutDirection="rtl"
                         android:padding="5dp"
-                        />
+                        android:prompt="@string/job_status" />
 
                     <TextView
                         android:id="@+id/txtjob_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="وضعیت شغلی: "
-                        android:layoutDirection="rtl"/>
+                        android:layoutDirection="rtl"
+                        android:text="وضعیت شغلی: " />
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/LinearLayoutDegree"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -215,9 +215,9 @@
                     android:id="@+id/txtEmailAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="arash13131313@gmail.com"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtEmailAddressTitle"
@@ -237,9 +237,9 @@
                     android:id="@+id/txtPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="09123456789"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtPhoneTitle"
@@ -259,9 +259,9 @@
                     android:id="@+id/txtProvinceResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="تهران"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtProvinceResumeTitle"
@@ -280,9 +280,9 @@
                     android:id="@+id/txtMarriageResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="مجرد"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtMarriageResumeTitle"
@@ -301,9 +301,9 @@
                     android:id="@+id/txtGenderResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="مرد"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtGenderResumeTitle"
@@ -322,15 +322,15 @@
                     android:id="@+id/txtBirthYearResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="۱۳۰۰"
+                    android:text=""
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtBirthYearResumeTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="سال تولد: "
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text="سال تولد: " />
             </LinearLayout>
 
             <LinearLayout
@@ -343,9 +343,9 @@
                     android:id="@+id/txtDutyResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="پایان خدمت"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtDutyResumeTitle"
@@ -364,9 +364,9 @@
                     android:id="@+id/txtAddressResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="بلوار ارتش، خیابان ابوذر"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:text=""
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtAddressResumeTitle"
@@ -430,6 +430,12 @@
             android:background="@color/textColorGrey" />
 
         <LinearLayout
+            android:id="@+id/LinearLayoutJobEduLang"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
             android:id="@+id/LinearLayoutresumepart3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -447,7 +453,6 @@
                 android:textSize="@dimen/textSize2" />/>
 
         </LinearLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -455,13 +460,11 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@color/textColorGrey" />
-
         <ListView
             android:id="@+id/listViewJobs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="ltr" />
-
         <ImageButton
             android:id="@+id/btnAddJobs"
             android:layout_width="50dp"
@@ -471,7 +474,6 @@
             android:background="@null"
             android:scaleType="fitXY"
             android:src="@drawable/ic_add" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -495,7 +497,6 @@
                 android:textSize="@dimen/textSize2" />
 
         </LinearLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -503,13 +504,11 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@color/textColorGrey" />
-
         <ListView
             android:id="@+id/listViewEducation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="ltr" />
-
         <ImageButton
             android:id="@+id/btnAddEducation"
             android:layout_width="50dp"
@@ -519,7 +518,6 @@
             android:background="@null"
             android:scaleType="fitXY"
             android:src="@drawable/ic_add" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -543,7 +541,6 @@
                 android:textSize="@dimen/textSize2" />
 
         </LinearLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -551,13 +548,11 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@color/textColorGrey" />
-
         <ListView
             android:id="@+id/listViewLang"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="ltr" />
-
         <ImageButton
             android:id="@+id/btnAddLang"
             android:layout_width="50dp"
@@ -567,13 +562,13 @@
             android:background="@null"
             android:scaleType="fitXY"
             android:src="@drawable/ic_add" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="10dp"
             android:background="@color/textColorGrey" />
 
+        </LinearLayout>
         <LinearLayout
             android:id="@+id/LinearLayoutresumepart6"
             android:layout_width="wrap_content"
@@ -987,9 +982,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:background="@drawable/telegram_btn"
             android:padding="5dp"
-            android:layout_marginTop="10dp"
             android:text="ذخیره تغییرات"
             android:textColor="@color/textColorWhite"
             android:textSize="@dimen/textSize1" />

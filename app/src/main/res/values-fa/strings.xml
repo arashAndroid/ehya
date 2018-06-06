@@ -152,28 +152,19 @@
 
 
     <!--Make Resume-->
-    <string name="JobTitle"> طراحی سایت و مدیر شرکت </string>
     <string name="JobTitle2"> عنوان شغلی: </string>
     <string name="LastDegree">مدرک تحصیلی</string>
     <string name="LastDegreeTitle">آخرین مدرک تحصیلی:</string>
     <string name="Edit">ویرایش</string>
     <string name="PrivateInfo">اطلاعات فردی</string>
-    <string name="EmailAddress">arash13131313@gmail.com</string>
     <string name="EmailAddressTitle">آدرس ایمیل: </string>
-    <string name="Phone">09123456789 </string>
     <string name="PhoneTitle">شماره موبایل:  </string>
     <string name="ProvinceResumeTitle">استان محل سکونت: </string>
-    <string name="ProvinceResume">تهران </string>
-    <string name="MarriageResume">مجرد </string>
     <string name="MarriageResumeTitle">وضعیت تأهل:  </string>
-    <string name="GenderResume">مرد </string>
     <string name="GenderResumeTitle">جنسیت:  </string>
-    <string name="BirthYearResume">۱۳۰۰ </string>
     <string name="BirthYearResumeTitle">سال تولد:   </string>
     <string name="DutyResumeTitle">وضعیت خدمت سربازی: </string>
-    <string name="DutyResume">پایان خدمت </string>
     <string name="AddressResumeTitle">آدرس:  </string>
-    <string name="AddressResume">بلوار ارتش، خیابان ابوذر </string>
     <string name="Talents">مهارت‌های حرفه‌ای</string>
     <string name="JobExp">سوابق شغلی</string>
     <string name="GraduateExp">سوابق تحصیلی</string>
@@ -350,6 +341,15 @@
         <item>دورکاری</item>
         <item>کارآموزی</item>
     </string-array>
+
+
+    <!--dialog exam-->
+    <string name="examtype">نوع تست</string>
+    <string name="examprice">قیمت تست</string>
+    <string name="examstart">شروع تست</string>
+    <string name="Next">بعدی</string>
+    <string name="Back">برگشت</string>
+
 
 
 

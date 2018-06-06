@@ -6,7 +6,7 @@ package com.mrehya;
 
 public class Job {
     int id;
-    String role,company,from,to;
+    String Jobtitle,role,company,from,to;
 
     public String getCompany() {
         return company;
@@ -16,21 +16,23 @@ public class Job {
         this.company = company;
     }
 
-    public Job(String from, String to, String role, String company) {
+    public Job(String Jobtitle, String from, String to, String role, String company) {
 
         this.from = from;
         this.to = to;
         this.role = role;
         this.company = company;
+        this.Jobtitle = Jobtitle;
     }
 
-    public Job(int id,String from, String to, String role, String company) {
+    public Job(String Jobtitle, int id,String from, String to, String role, String company) {
 
         this.id = id;
         this.from = from;
         this.to = to;
         this.role = role;
         this.company = company;
+        this.Jobtitle = Jobtitle;
     }
 
     public int getId() {
@@ -63,5 +65,13 @@ public class Job {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getJobtitle() {
+        return Jobtitle;
+    }
+
+    public void setJobtitle(String Jobtitle) {
+        this.Jobtitle = Jobtitle;
     }
 }

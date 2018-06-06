@@ -57,30 +57,19 @@
 
 
     <!--Make Resume-->
-    <string name="JobTitle"> Site design and company manager</string>
     <string name="JobTitle2">job title: </string>
-    <string name="UnderJobTitle">Cannot see</string>
-    <string name="UnderJobTitle2">Cannot see: </string>
-    <string name="LastDegree">Bachelor of Software</string>
     <string name="LastDegreeTitle">Educational certificate: </string>
     <string name="Edit">Edit</string>
     <string name="PrivateInfo">Private Info</string>
-    <string name="EmailAddress">arash13131313@gmail.com</string>
     <string name="EmailAddressTitle">Email Address:  </string>
-    <string name="Phone">09123456789 </string>
     <string name="PhoneTitle">Phone:  </string>
     <string name="ProvinceResumeTitle">Location(Province): </string>
-    <string name="ProvinceResume">Tehran </string>
-    <string name="MarriageResume">Single </string>
     <string name="MarriageResumeTitle">marital status:  </string>
-    <string name="GenderResume">Male </string>
     <string name="GenderResumeTitle">Gender:  </string>
-    <string name="BirthYearResume">1300 </string>
     <string name="BirthYearResumeTitle">Year of Birth:  </string>
     <string name="DutyResumeTitle">Military service status: </string>
     <string name="DutyResume">Done </string>
     <string name="AddressResumeTitle">Address:  </string>
-    <string name="AddressResume">بلوار ارتش، خیابان ابوذر </string>
     <string name="Talents">Professional skills </string>
     <string name="JobExp">work experience</string>
     <string name="GraduateExp">Educational records</string>
@@ -354,4 +343,10 @@
     </string-array>
 
 
+    <!--dialog exam-->
+    <string name="examtype">Exam Type</string>
+    <string name="examprice">Exam Price</string>
+    <string name="examstart">Start Exam</string>
+    <string name="Next">Next</string>
+    <string name="Back">Back</string>
 </resources>

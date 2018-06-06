@@ -66,28 +66,9 @@ public class ChooseExam extends AppCompatActivity {
         listViewExams.setAdapter(listAdapterExams);
         //setExamsList();
         Exam_Api(updatelanguage(this));
-
-
-
-        //new
-
-
-
-
     }
 
-    //****Setting the List Items****//
-    private void setExamsList(){
-//        load exams fromdatabase
-
-        listExams.add(new Exam(0,10,"زناشویی111","ارتقااعتماداعتماداعتماداعتماد"));
-        listExams.add(new Exam(1,10,"اعتماد به نفس","نفس اعتماداعتماداعتماد "));
-        listExams.add(new Exam(2,10,"هوش","ارتقا هوش هوش هوشهوش هوش"));
-
-
-    }
-
-    //Progress Dialog
+   //Progress Dialog
     private void startDialog(){
         pDialog.setCancelable(true);
         if(Language.equals("fa"))
@@ -97,12 +78,10 @@ public class ChooseExam extends AppCompatActivity {
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         showDialog();
     }
-
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
     }
-
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
@@ -193,7 +172,6 @@ public class ChooseExam extends AppCompatActivity {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-    //CHECK DATA.LENGTH NEED -1
     public void set_Content(JSONObject data) throws JSONException {
 
 
@@ -203,10 +181,12 @@ public class ChooseExam extends AppCompatActivity {
 
             if (Language.equals("fa")) {
                 listExams.add(new Exam(c.getInt("id"),c.getString("title"),
-                        c.getString("content"), c.getString("price"),c.getJSONObject("image").getString("thumb")));
+                        c.getString("content"), c.getString("price"),c.getJSONObject("image").getString("thumb")
+                        , c.getString("paymentType")));
             }else {
                 listExams.add(new Exam(c.getInt("id"),c.getString("title_en"),
-                        c.getString("content_en"), c.getString("price"),c.getJSONObject("image").getString("thumb")));
+                        c.getString("content_en"), c.getString("price"),c.getJSONObject("image").getString("thumb")
+                        , c.getString("paymentType")));
             }
 
 
@@ -234,7 +214,6 @@ public class ChooseExam extends AppCompatActivity {
 
         return language;
     }
-
     private void updateView(String language) {
         Context context = LocaleHelper.setLocale(this, language);
         Resources resources = context.getResources();

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class Exam {
     private int qCount;
     private int id;
-    private int time;
-    private String image;
+    private int time, quiezTime;
+    private String image,type;
     public int getId() {
         return id;
     }
@@ -26,6 +26,22 @@ public class Exam {
     public void setTime(int time) {
         this.time = time;
     }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.quiezTime = quiezTime;
+    }
+
+    public int getquiezTime() {
+        return quiezTime;
+    }
+
+    public void setquiezTime(int quiezTime) {
+        this.quiezTime = quiezTime;
+    }
+
 
     private String name;
 
@@ -77,13 +93,14 @@ public class Exam {
         this.price = price;
     }
 
-    public Exam(int id, String name, String description, String price, String image) {
+    public Exam(int id, String name, String description, String price, String image, String Type) {
 
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.image = image;
+        this.type = Type;
     }
 
 
@@ -95,11 +112,12 @@ public class Exam {
         this.image = image;
     }
 
-    public Exam(int id, int time, String name, String description) {
+    public Exam(int id, int time, String name, String description, String Type) {
         this.id = id;
         this.time = time;
         this.name = name;
         this.description = description;
+        this.type = Type;
 
     }
 

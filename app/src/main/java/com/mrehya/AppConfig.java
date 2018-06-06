@@ -37,7 +37,12 @@ public class AppConfig {
 
     public static String URL_GETAPI_RESUME = "http://api.mrehya.com/v1/resume/view/";
 
-    public static String URL_REPORT_REPLAY = str + "report_replay.php";
+    public static String URL_ResumeLanguages = "http://api.mrehya.com/v1/user/language?id=";
+    public static String URL_ResumeExperiences = "http://api.mrehya.com/v1/user/experience?id=";
+    public static String URL_ResumeAcademics = "http://api.mrehya.com/v1/user/academic?id=";
+
+
+    public static String URL_Get_Exam = "http://api.mrehya.com/v1/quizzes/view/";
 
     public static String URL_REPORT = str + "report.php";
 

@@ -315,7 +315,10 @@ public class Login extends AppCompatActivity implements
                         mobile = c.getString("mobile");
                         address = c.getString("address");
                         zip = c.getString("postal_code");
-                        resume = c.getString("resumeId");
+                        if(c.has("resumeId"))
+                            resume =c.getString("resumeId");
+                        else
+                            resume =c.getString(null);
                         password = passwordd;
                         session.setLogin(true);
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,resume);

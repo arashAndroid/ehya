@@ -478,7 +478,7 @@ public class Signup extends AppCompatActivity {
                         JSONObject c = jObj.getJSONObject("data");
                         int id =0;
                         String firstname=" ",lastname=" " , email=" ", phone= " ", token=" ",
-                                image =" ",mobile=" ",address=" ", zip=" ",password=" ";
+                                image =" ",mobile=" ",address=" ", zip=" ",password=" ",resume=" ";
                         // Now store the user in SQLite
                         id = c.getInt("id");
                         firstname = c.getString("first_name");
@@ -490,6 +490,10 @@ public class Signup extends AppCompatActivity {
                         mobile = c.getString("mobile");
                         address = c.getString("address");
                         zip = c.getString("postal_code");
+                        if(c.has("resumeId"))
+                            resume =c.getString("resumeId");
+                        else
+                            resume =c.getString(null);
                         password = passwordd;
                         session.setLogin(true);
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,"0");

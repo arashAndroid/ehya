@@ -120,6 +120,8 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
         final EditText txtEditCompany = dialog.findViewById(R.id.txtEditDialogJobCompany);
         final Spinner txtEditFrom = dialog.findViewById(R.id.spinnerFromJob);
         final Spinner txtEditTo = dialog.findViewById(R.id.spinnerToJob);
+        final EditText txtEditJobtitle = dialog.findViewById(R.id.txtEditDialogJobtitle);
+
         txtEditRole.setText(jobRole);
         txtEditCompany.setText(jobCompany);
         for (int i=0;i<txtEditFrom.getCount();i++){
@@ -142,7 +144,7 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Job job = new Job(txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString());
+                Job job = new Job(txtEditJobtitle.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString());
                 list.set(index,job);
                 notifyDataSetChanged();
                 dialog.dismiss();

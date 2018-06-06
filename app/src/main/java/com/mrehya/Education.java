@@ -6,22 +6,24 @@ package com.mrehya;
 
 public class Education {
     int id;
-    String field,place,from,to;
+    String field,place,from,to,grade;
 
-    public Education(String field, String place, String from, String to) {
+    public Education(String grade, String field, String place, String from, String to) {
         this.field = field;
         this.place = place;
         this.from = from;
         this.to = to;
+        this.grade = grade;
     }
 
-    public Education(int id, String field, String place, String from, String to) {
+    public Education(String grade, int id, String field, String place, String from, String to) {
 
         this.id = id;
         this.field = field;
         this.place = place;
         this.from = from;
         this.to = to;
+        this.grade = grade;
     }
 
     public int getId() {
@@ -63,4 +65,12 @@ public class Education {
     public void setTo(String to) {
         this.to = to;
     }
+
+    public String getGrade() {
+        return grade;
+    }
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
 }

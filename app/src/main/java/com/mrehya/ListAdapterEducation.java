@@ -122,6 +122,8 @@ public class ListAdapterEducation extends BaseAdapter implements ListAdapter {
         final EditText txtEditPlace = dialog.findViewById(R.id.txtEditDialogEducationPlace);
         final Spinner txtEditFrom = dialog.findViewById(R.id.spinnerFromEducation);
         final Spinner txtEditTo = dialog.findViewById(R.id.spinnerToEducation);
+        final Spinner txtEditgrade = dialog.findViewById(R.id.spinnerFromEducation);
+
         txtEditField.setText(educationField);
         txtEditPlace.setText(educationPlace);
         for (int i=0;i<txtEditFrom.getCount();i++){
@@ -144,7 +146,7 @@ public class ListAdapterEducation extends BaseAdapter implements ListAdapter {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Education edu = new Education(txtEditField.getText().toString(),txtEditPlace.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString());
+                Education edu = new Education(txtEditgrade.getSelectedItem().toString(), txtEditField.getText().toString(),txtEditPlace.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString());
                 list.set(index,edu);
                 notifyDataSetChanged();
                 dialog.dismiss();

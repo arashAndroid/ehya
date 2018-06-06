@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 
 import java.util.Locale;
 
+import co.ronash.pushe.Pushe;
 import io.paperdb.Paper;
 
 public class Language extends AppCompatActivity {
@@ -25,6 +26,8 @@ public class Language extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_language);
+
+        Pushe.initialize(this,true);
         btnPersian = (Button) findViewById(R.id.btnPersian);
         imgBtnPersian = (ImageButton) findViewById(R.id.imgBtnPersian);
 

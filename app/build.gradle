@@ -44,4 +44,9 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.zcw:togglebutton-library:1.0.0'
     compile 'com.google.android.gms:play-services-auth:11.8.0'
+    //ok//
+
+    compile 'co.ronash.android:pushe-base:1.4.0'
+    compile 'com.google.android.gms:play-services-gcm:11.8.0'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
 }

@@ -142,6 +142,10 @@ public class MakeResume extends AppCompatActivity {
     private ProgressDialog StartDialog;
 
 
+    //Linear Layouts
+    LinearLayout LinearLayoutDegree;
+    LinearLayout LinearLayoutJobEduLang;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -373,14 +377,26 @@ public class MakeResume extends AppCompatActivity {
         });
         StartDialog.setProgress(100);
         updateView(Language);
+        get_resume_api();
         hideDialog(StartDialog);
 
 
     }
-    //    public  void setValues(){
-//
-//    }
     private void setViews(){
+        //Linear layouts
+        LinearLayoutDegree = (LinearLayout) findViewById(R.id.LinearLayoutDegree);
+        LinearLayoutJobEduLang = (LinearLayout) findViewById(R.id.LinearLayoutJobEduLang);
+
+        int resume = Integer.getInteger(session.getUserDetails().getResume());
+        if(session.getUserDetails().getResume()== null || resume==0)
+        {
+            Log.d("resume1", "resume1: " + resume);
+            hideshow(1);
+        }
+        else{
+            Log.d("resume2",resume+"");
+            hideshow(2);
+        }
         //ListViews
         listViewProes = (ListView) findViewById(R.id.listViewProes);
         listViewJobs = (ListView) findViewById(R.id.listViewJobs);
@@ -390,6 +406,7 @@ public class MakeResume extends AppCompatActivity {
         listViewJobcat = (ListView) findViewById(R.id.listViewJobcat);
         listViewTerms = (ListView) findViewById(R.id.listViewTerms);
         listViewSkill = (ListView) findViewById(R.id.listViewSkill);
+
 
         //checkbox
         chkPromo = (CheckBox) findViewById(R.id.chkPromo);
@@ -600,6 +617,8 @@ public class MakeResume extends AppCompatActivity {
         final EditText txtEditCompany = dialog.findViewById(R.id.txtEditDialogJobCompany);
         final Spinner txtEditFrom = dialog.findViewById(R.id.spinnerFromJob);
         final Spinner txtEditTo = dialog.findViewById(R.id.spinnerToJob);
+        final EditText txtEditJobtitle = dialog.findViewById(R.id.txtEditDialogJobtitle);
+
         LinearLayout LinearLayoutresumedialogJob = dialog.findViewById(R.id.LinearLayoutresumedialogJob);
         LinearLayout LinearLayoutresumedialogJob2 = dialog.findViewById(R.id.LinearLayoutresumedialogJob2);
         LinearLayout LinearLayoutresumedialogJob3 = dialog.findViewById(R.id.LinearLayoutresumedialogJob3);
@@ -620,7 +639,7 @@ public class MakeResume extends AppCompatActivity {
                 LinearLayoutresumedialogJob2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                 LinearLayoutresumedialogJob3.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             }
-            btnEditd.setText("ویرایش");
+            btnEditd.setText("ثبت و ذخیره");
         }
 
         else
@@ -630,7 +649,7 @@ public class MakeResume extends AppCompatActivity {
                 LinearLayoutresumedialogJob2.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
                 LinearLayoutresumedialogJob3.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             }
-            btnEditd.setText("Edit");
+            btnEditd.setText("Save");
         }
         txtpost.setText(resources.getString(R.string.post));
         txtcompany.setText(resources.getString(R.string.Company));
@@ -647,11 +666,14 @@ public class MakeResume extends AppCompatActivity {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Job job = new Job(txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString());
-                listJobs.add(job);
-                listAdapterJobs.notifyDataSetChanged();
-                justifyListViewHeightBasedOnChildren(listView);
-                dialog.dismiss();
+                if(!(existsexperience(txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString())))
+                {
+                    Job job = new Job(txtEditJobtitle.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString());
+                    job.setId(0);
+                    listJobs.add(job);
+                    listAdapterJobs.notifyDataSetChanged();
+                    justifyListViewHeightBasedOnChildren(listView);
+                }
             }
         });
         dialog.show();
@@ -672,14 +694,14 @@ public class MakeResume extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 LinearLayout1.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             }
-            btnEditd.setText("ویرایش");
+            btnEditd.setText("ثبت و ذخیره");
         }
 
         else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 LinearLayout1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             }
-            btnEditd.setText("Edit");
+            btnEditd.setText("Save");
         }
 
         Context context = LocaleHelper.setLocale(getApplicationContext(), Language);
@@ -706,11 +728,13 @@ public class MakeResume extends AppCompatActivity {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Lang lang = new Lang(spinnerLang.getSelectedItem().toString(),spinnerLevel.getSelectedItem().toString());
-                listLang.add(lang);
-                listAdapterLang.notifyDataSetChanged();
-                justifyListViewHeightBasedOnChildren(listView);
-                dialog.dismiss();
+                if(!(existslang(spinnerLang.getSelectedItem().toString(),spinnerLevel.getSelectedItem().toString()))){
+                    Lang lang = new Lang(spinnerLang.getSelectedItem().toString(),spinnerLevel.getSelectedItem().toString());
+                    lang.setId(0);
+                    listLang.add(lang);
+                    listAdapterLang.notifyDataSetChanged();
+                    justifyListViewHeightBasedOnChildren(listView);
+                }
             }
         });
         dialog.show();
@@ -723,6 +747,7 @@ public class MakeResume extends AppCompatActivity {
         final EditText txtEditPlace = dialog.findViewById(R.id.txtEditDialogEducationPlace);
         final Spinner txtEditFrom = dialog.findViewById(R.id.spinnerFromEducation);
         final Spinner txtEditTo = dialog.findViewById(R.id.spinnerToEducation);
+        final Spinner txtEditgrade = dialog.findViewById(R.id.spinnerFromEducation);
 
         TextView txtmajor = dialog.findViewById(R.id.txtmajor);
         TextView txteducationplace = dialog.findViewById(R.id.txteducationplace);
@@ -740,7 +765,7 @@ public class MakeResume extends AppCompatActivity {
                 LinearLayoutresumedialogEdu2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                 LinearLayoutresumedialogEdu3.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             }
-            btnEditd.setText("ویرایش");
+            btnEditd.setText("ثبت و ذخیره");
         }
 
         else
@@ -750,7 +775,7 @@ public class MakeResume extends AppCompatActivity {
                 LinearLayoutresumedialogEdu2.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
                 LinearLayoutresumedialogEdu3.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             }
-            btnEditd.setText("Edit");
+            btnEditd.setText("Save");
         }
 
         ImageButton btnEdit = dialog.findViewById(R.id.btnEditDialogEducation);
@@ -761,11 +786,15 @@ public class MakeResume extends AppCompatActivity {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Education edu = new Education(txtEditField.getText().toString(),txtEditPlace.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString());
-                listEducation.add(edu);
-                listAdapterEducation.notifyDataSetChanged();
-                justifyListViewHeightBasedOnChildren(listView);
-                dialog.dismiss();
+                if(!(existsacademic(txtEditgrade.getSelectedItem().toString(), txtEditField.getText().toString(),txtEditPlace.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString())))
+                {
+                    Education edu = new Education(txtEditgrade.getSelectedItem().toString(), txtEditField.getText().toString(),txtEditPlace.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString());
+                    edu.setId(0);
+                    listEducation.add(edu);
+                    listAdapterEducation.notifyDataSetChanged();
+                    justifyListViewHeightBasedOnChildren(listView);
+                }
+
             }
         });
 
@@ -831,6 +860,7 @@ public class MakeResume extends AppCompatActivity {
         }
 
         if(JobcatsMap.size()<=0){
+            JobCats_Api();
             String[] list = new String[1];
             list[0] =  "Empty";
             ArrayAdapter<String> Jobcatadapter = new ArrayAdapter<String>(
@@ -1393,26 +1423,26 @@ public class MakeResume extends AppCompatActivity {
 
             txtLastDegreeTitle.setText(resources.getString(R.string.LastDegree));
 
-            txtEmailAddress.setText(resources.getString(R.string.EmailAddress));
+            //txtEmailAddress.setText(resources.getString(R.string.EmailAddress));
             txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddressTitle));
 
-            txtPhone.setText(resources.getString(R.string.Phone));
+            //txtPhone.setText(resources.getString(R.string.Phone));
             txtPhoneTitle.setText(resources.getString(R.string.PhoneTitle));
 
-            txtProvinceResume.setText(resources.getString(R.string.ProvinceResume));
+           // txtProvinceResume.setText(resources.getString(R.string.ProvinceResume));
             txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResumeTitle));
 
-            txtMarriageResume.setText(resources.getString(R.string.MarriageResume));
+           // txtMarriageResume.setText(resources.getString(R.string.MarriageResume));
             txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResumeTitle));
 
 
-            txtBirthYearResume.setText(resources.getString(R.string.BirthYearResume));
+         //  txtBirthYearResume.setText(resources.getString(R.string.BirthYearResume));
             txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResumeTitle));
 
-            txtDutyResume.setText(resources.getString(R.string.DutyResume));
+          //  txtDutyResume.setText(resources.getString(R.string.DutyResume));
             txtDutyResumeTitle.setText(resources.getString(R.string.DutyResumeTitle));
 
-            txtAddressResume.setText(resources.getString(R.string.AddressResume));
+           // txtAddressResume.setText(resources.getString(R.string.AddressResume));
             txtAddressResumeTitle.setText(resources.getString(R.string.AddressResumeTitle));
         }
         else{
@@ -1423,25 +1453,25 @@ public class MakeResume extends AppCompatActivity {
             txtLastDegreeTitle.setText(resources.getString(R.string.LastDegree));
 
             txtEmailAddress.setText(resources.getString(R.string.EmailAddressTitle));
-            txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddress));
+           // txtEmailAddressTitle.setText(resources.getString(R.string.EmailAddress));
 
             txtPhone.setText(resources.getString(R.string.PhoneTitle));
-            txtPhoneTitle.setText(resources.getString(R.string.Phone));
+          //  txtPhoneTitle.setText(resources.getString(R.string.Phone));
 
             txtProvinceResume.setText(resources.getString(R.string.ProvinceResumeTitle));
-            txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResume));
+          //  txtProvinceResumeTitle.setText(resources.getString(R.string.ProvinceResume));
 
             txtMarriageResume.setText(resources.getString(R.string.MarriageResumeTitle));
-            txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResume));
+         ///   txtMarriageResumeTitle.setText(resources.getString(R.string.MarriageResume));
 
             txtBirthYearResume.setText(resources.getString(R.string.BirthYearResumeTitle));
-            txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResume));
+        //    txtBirthYearResumeTitle.setText(resources.getString(R.string.BirthYearResume));
 
             txtDutyResume.setText(resources.getString(R.string.DutyResumeTitle));
-            txtDutyResumeTitle.setText(resources.getString(R.string.DutyResume));
+           // txtDutyResumeTitle.setText(resources.getString(R.string.DutyResume));
 
             txtAddressResume.setText(resources.getString(R.string.AddressResumeTitle));
-            txtAddressResumeTitle.setText(resources.getString(R.string.AddressResume));
+         //   txtAddressResumeTitle.setText(resources.getString(R.string.AddressResume));
         }
 
 
@@ -1461,7 +1491,7 @@ public class MakeResume extends AppCompatActivity {
         txtJobBenefits.setText(resources.getString(R.string.JobBenefits));
         txtAboutMe2.setText(resources.getString(R.string.AboutMe2));
         txtGenderResumeTitle.setText(resources.getString(R.string.GenderResumeTitle));
-        txtGenderResume.setText(resources.getString(R.string.GenderResume));
+       // txtGenderResume.setText(resources.getString(R.string.GenderResume));
     }
 
     public void update_personal_info_dialog(String Language){
@@ -1555,7 +1585,7 @@ public class MakeResume extends AppCompatActivity {
                         address = c.getString("address");
                         zip = c.getString("postal_code");
                         if(c.has("resumeId"))
-                            resume =c.getString("resumeid");
+                            resume =c.getString("resumeId");
                         else
                             resume =c.getString(null);
                         password = passwordd;
@@ -1784,29 +1814,34 @@ public class MakeResume extends AppCompatActivity {
 
                 params.put("auth",session.getUserDetails().getToken() );
                 params.put("Resume[job_title]", txtJobTitleTitle.getText().toString());
+                params.put("Resume[slug]",EdittxtSlug.getText().toString() );
+                params.put("Resume[job_status]",JobStatus_arrays.indexOf( txtjob_status.getText().toString())+1+"");
+
+                String skills  = null;
+                for(String item: listSkill){
+                    skills+=item+",";
+                }
+                params.put("Resume[skills]",skills.substring(0,skills.length()-1) );
+
                 params.put("Resume[provinceId] ",Province.indexOf(txtProvinceResume.getText())+1+"");
                 params.put("Resume[year_birth]", txtBirthYearResume.getText().toString());
                 params.put("Resume[martial]", Marital_arrays.indexOf(txtMarriageResume.getText())+1+"");
                 params.put("Resume[sex]",Gender_arrays.indexOf(txtGenderResume.getText())+1+"");
-                params.put("Resume[job_status]",JobStatus_arrays.indexOf( txtjob_status.getText().toString())+1+"");
                 if (!(txtDutyResume.getText()==null))
                     params.put("Resume[military_status]",Militaryservice_arrays.indexOf(txtDutyResume.getText())+1+"" );
-                params.put("Resume[about_me]",txtAboutMe.getText().toString() );
+
+
                 params.put("Resume[provinces][] ",SplitListProvince());
-                params.put("Resume[skills]",txtTalents.getText().toString() );
                 params.put("Resume[contracts][]",SplitTerms() );
                 params.put("Resume[benefits][]",MakeCheckString());
+
                 if (listSkill.size()!=0)
                     params.put("Resume[levels]",Seniority_arrays.indexOf(listSkill.get(0))+1+"" );
-                params.put("Resume[slug]",EdittxtSlug.getText().toString() );
-                Log.d("TAG", "sluuuuuuug: "+EdittxtSlug.getText().toString());
                 params.put("categories","1,2");
                 params.put("Resume[salary]",Salary_arrays.indexOf(spinnerDesiredIncome.getSelectedItem().toString())+1+"" );
-                params.put("Resume[addressaddress]",txtAddressResume.getText().toString() );
+                //params.put("Resume[address]",txtAddressResume.getText().toString() );
 
-
-
-
+                params.put("Resume[about_me]",txtAboutMe.getText().toString() );
                 return params;
             }
 
@@ -1828,8 +1863,6 @@ public class MakeResume extends AppCompatActivity {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-
-
     private void get_resume_api(){
         String tag_string_req = "req_login";
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -1963,7 +1996,6 @@ public class MakeResume extends AppCompatActivity {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-
     public void setValues(String id,
                           String job_title,
                           String year_birth,
@@ -2082,6 +2114,278 @@ public class MakeResume extends AppCompatActivity {
 
     }
 
+
+    private void hideshow(int hide){
+        if(hide==1){
+            Log.d("TAG", "hideshow: " + "ok");
+            LinearLayoutDegree.setVisibility(View.GONE);
+            LinearLayoutJobEduLang.setVisibility(View.GONE);
+        }
+        else{
+            LinearLayoutDegree.setVisibility(View.VISIBLE);
+            LinearLayoutJobEduLang.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+   //NEW APIs
+   public boolean existslang(String name, String level){
+       for (Lang item: listLang) {
+           if(item.getName().equals(name) && item.getLevel().equals(level))
+               return true;
+       }
+       return false;
+   }
+    private void set_languages(final String resumeId){
+        for (final Lang item : listLang) {
+            String id = "";
+            //check if its in old and updated or not
+            if(item.getId()!=0)
+            {
+                id = item.getId()+"";
+            }
+
+            String tag_string_req = "req_resumelanguage";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_ResumeLanguages + id, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d("TAG", "resumelanguage Response: " + response.toString());
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        String success = jObj.getString("success");
+
+                        // Check for error node in json
+                        if (success.equalsIgnoreCase("true")) {
+                            finish();
+                            startActivity(getIntent());
+                        } else {
+                            Log.d("TAG", "failed to set language");
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        Log.d("TAG", "failed to set language error 1 ");
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("TAG", "failed to set language  error2 : " + error.getMessage());
+                }
+            }) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("LangResume[language]", item.getName());
+                    params.put("LangResume[level]", item.getLevel());
+                    params.put("LangResume[resumeId]", "0");//session.getUserDetails().getResume()
+                    params.put("auth", session.getUserDetails().getToken());
+                    return params;
+                }
+
+
+                //basic auth
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    // add headers <key,value>
+                    String credentials = AppConfig.AUTH_USERNAME + ":" + AppConfig.AUTH_PASS;
+                    String auth = "Basic "
+                            + Base64.encodeToString(credentials.getBytes(),
+                            Base64.URL_SAFE | Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+
+            };
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        }
+    }
+
+
+    // getting experiences from api : id,job_title,company,start_year,end_year
+    // add this lang.setId(0); to listLang.add(lang);
+    public boolean existsexperience(String from, String to, String role, String name){
+        for (Job item: listJobs) {
+            if(item.getFrom().equals(from) && item.getTo().equals(to) && item.getRole().equals(role)
+                    && item.getCompany().equals(name))
+                return true;
+        }
+        return false;
+    }
+    private void set_experiences(final String resumeId){
+
+        for(final Job item:listJobs){
+            String id = "";
+            if(item.getId() != 0){
+                id=item.getId()+"";
+            }
+            String tag_string_req = "req_resumeexperience";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_ResumeExperiences+ id, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d("TAG", "resumeexperience Response: " + response.toString());
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        String success = jObj.getString("success");
+
+                        // Check for error node in json
+                        if (success.equalsIgnoreCase("true")) {
+                            finish();
+                            startActivity(getIntent());
+                        } else {
+                            Log.d("TAG", "failed to set experience");
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        Log.d("TAG", "failed to set experience error 1 ");
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("TAG",  "failed to set experience  error2 : " + error.getMessage());
+                }
+            }) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Experience[job_title]", item.getJobtitle());
+                    params.put("Experience[company]", item.getCompany());
+                    params.put("Experience[start_month]", "1" );
+                    params.put("Experience[start_year]",item.getFrom());
+                    params.put("Experience[end_month]","1");
+                    params.put("Experience[end_year]", item.getTo());
+                    params.put("Experience[working]","0");
+                    params.put("Experience[description]", "");
+                    params.put("Experience[resumeId]","0");// session.getUserDetails().getResume()
+                    params.put("auth", session.getUserDetails().getToken());
+                    return params;
+                }
+
+
+                //basic auth
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String,String> headers = new HashMap<String, String>();
+                    // add headers <key,value>
+                    String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
+                    String auth = "Basic "
+                            + Base64.encodeToString(credentials.getBytes(),
+                            Base64.URL_SAFE|Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+
+            };
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+        }
+    }
+
+    // getting langs from api : id,language,level
+    // add this lang.setId(0); to listLang.add(lang);
+    public boolean existsacademic(String grade, String field, String Place, String from, String to){
+        for (Education item: listEducation) {
+            if(item.getGrade().equals(grade) && item.getFrom().equals(from) && item.getTo().equals(to) && item.getField().equals(field)
+                    && item.getPlace().equals(Place))
+                return true;
+        }
+        return false;
+    }
+    private void set_academics(final String resumeId)
+    {
+
+        for(final Education item:listEducation){
+            String id = "";
+            if(item.getId() != 0){
+                id=item.getId()+"";
+            }
+            String tag_string_req = "req_resumeAcademic";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_ResumeAcademics+ id, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    Log.d("TAG", "resumeexperience Response: " + response.toString());
+
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        String success = jObj.getString("success");
+
+                        // Check for error node in json
+                        if (success.equalsIgnoreCase("true")) {
+                            finish();
+                            startActivity(getIntent());
+                        } else {
+                            Log.d("TAG", "failed to set Academic");
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
+                        Log.d("TAG", "failed to set Academic error 1 ");
+                        e.printStackTrace();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("TAG",  "failed to set Academic  error2 : " + error.getMessage());
+                }
+            }) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Academic[field]", item.getField());
+                    params.put("Academic[university]", item.getPlace());
+                    params.put("Academic[grade]", item.getGrade());
+                    params.put("Academic[start_year]",item.getFrom());
+                    params.put("Academic[end_month]","1");
+                    params.put("Academic[end_year]", item.getTo());
+                    params.put("Academic[still]","0");
+                    params.put("Academic[description]", "");
+                    params.put("Academic[resumeId]","0");// session.getUserDetails().getResume()
+                    params.put("auth", session.getUserDetails().getToken());
+                    return params;
+                }
+
+
+                //basic auth
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String,String> headers = new HashMap<String, String>();
+                    // add headers <key,value>
+                    String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
+                    String auth = "Basic "
+                            + Base64.encodeToString(credentials.getBytes(),
+                            Base64.URL_SAFE|Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
+                }
+
+            };
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+        }
+    }
 
     //progres
     private void startDialog(ProgressDialog dialog, String famessage,String  enmessage,int type,boolean cancel){
