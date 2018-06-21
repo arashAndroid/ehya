@@ -23,11 +23,12 @@
 
     <LinearLayout
         android:gravity="center_horizontal"
-        android:padding="8dp"
+        android:padding="16dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.mrehya.MyTextView
+            android:textSize="20sp"
             android:layout_marginTop="10dp"
             android:text="@string/aboutText"
             android:layout_width="wrap_content"

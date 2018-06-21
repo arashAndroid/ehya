@@ -58,7 +58,14 @@
             android:background="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
-
+        <Button
+            android:layout_marginTop="16dp"
+            android:text="خروج"
+            android:textColor="@color/btnBlue"
+            android:id="@+id/btnLogOut"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
 
     </LinearLayout>

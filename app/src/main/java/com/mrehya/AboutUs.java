@@ -10,9 +10,7 @@ public class AboutUs extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
 
-        //hello from john cena
-//         String str = "";----------------
-        //teamviewer
-        
+
+
     }
 }

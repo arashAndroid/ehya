@@ -72,16 +72,17 @@
         android:background="@drawable/btn_secondary"
         android:text="ثبت نام"
         />
+
     <com.google.android.gms.common.SignInButton
         android:layout_marginTop="16dp"
         android:layout_below="@+id/btnToRegister"
         android:id="@+id/btn_sign_in_google"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"/>
     <android.support.v7.widget.AppCompatButton
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/btnToChangePassword"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/btn_sign_in_google"

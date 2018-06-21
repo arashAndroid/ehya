@@ -304,7 +304,7 @@ public class Login extends AppCompatActivity implements
                         int id =0;
                         String firstname=" ",lastname=" " , email=" ", phone= " ", token=" ",
                                 image =" ",mobile=" ",address=" ", zip=" ",password=" ",resume=" ";
-                        // Now store the user in SQLite
+                        // Now store ttag okokhe user in SQLiteokok;
                         id = c.getInt("id");
                         firstname = c.getString("first_name");
                         lastname = c.getString("last_name");
@@ -316,11 +316,12 @@ public class Login extends AppCompatActivity implements
                         address = c.getString("address");
                         zip = c.getString("postal_code");
                         if(c.has("resumeId"))
-                            resume =c.getString("resumeId");
+                            resume =c.getInt("resumeId")+"";
                         else
-                            resume =c.getString(null);
+                            resume =null;
                         password = passwordd;
                         session.setLogin(true);
+                        Log.d("TAG", "user logged");
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,resume);
                         //hideDialog();
                     } else {
@@ -330,7 +331,7 @@ public class Login extends AppCompatActivity implements
                     }
                 } catch (JSONException e) {
                     // JSON error
-                    Log.d("TAG", "error 1 ");
+                    Log.d("TAG", "error 1 " + e.getMessage());
                     e.printStackTrace();
                     hideDialog();
                 }
@@ -406,7 +407,7 @@ public class Login extends AppCompatActivity implements
     private void startDialog(){
         pDialog.setCancelable(false);
         if(Language.equals("fa"))
-            pDialog.setMessage("در حال وارد شدن...");
+            pDialog.setMessage("در حال ورود...");
         else
             pDialog.setMessage("Logging in...");
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

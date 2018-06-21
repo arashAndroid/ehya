@@ -104,6 +104,7 @@ public class SessionManager {
         String resume = pref.getString("resume" , null);
 
         User user = new User(id,firstname,lastname,email,resume);
+        user.setEmail(email);
         user.setAddress(address);user.setPhone(phone);user.setMobile(mobile);user.setImage(image);user.setZip(zip);
         user.setToken(token);user.setPassword(password);user.setResume(resume);
         return user;

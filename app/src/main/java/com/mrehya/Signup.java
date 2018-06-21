@@ -491,9 +491,9 @@ public class Signup extends AppCompatActivity {
                         address = c.getString("address");
                         zip = c.getString("postal_code");
                         if(c.has("resumeId"))
-                            resume =c.getString("resumeId");
+                            resume =c.getInt("resumeId")+"";
                         else
-                            resume =c.getString(null);
+                            resume =null;
                         password = passwordd;
                         session.setLogin(true);
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,"0");

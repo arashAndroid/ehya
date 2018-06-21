@@ -80,8 +80,18 @@ public class Question {
         this.time = time;
     }
 
-    public class answer
+    public static class answer
     {
+        public answer(int id, int questionId, int point, String text, String texten) {
+            this.id = id;
+            this.questionId = questionId;
+            this.point = point;
+            this.text = text;
+            this.texten = texten;
+        }
+        public answer() {
+        }
+
         public int id,questionId,point;
 
         public int getId() {

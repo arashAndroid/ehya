@@ -45,8 +45,8 @@ public class Test extends AppCompatActivity {
     CircularProgressBar progressBar;
     private String Language;
     private ProgressDialog pDialog;
-    int counter;
-
+    int counter, pts=0;
+    Question.answer[] ans;
     private Exam exam;
 
     @Override
@@ -55,7 +55,6 @@ public class Test extends AppCompatActivity {
         setContentView(R.layout.activity_test);
         Paper.init(this);
         Language=updateLanguage();
-        updateView(Language);
 
         pDialog = new ProgressDialog(this);
         counter=0;
@@ -78,20 +77,66 @@ public class Test extends AppCompatActivity {
         // getting exam from examslist by id
         Intent intent = getIntent();
         Exam_api_with_Questions(intent.getIntExtra("examId",0));
-        setRadioBtn();
-        setBtnOnClick();
 
+
+    }
+    private void setPoints(){
+        for(int i=1;i<=counter;i++){
+            if(Language.equals("fa"))
+            {
+                if(exam.getQuestion(i).ans1.getText().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans1.getPoint();
+                }
+                else if(exam.getQuestion(i).ans2.getText().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans2.getPoint();
+                }
+                else if(exam.getQuestion(i).ans3.getText().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans3.getPoint();
+                }
+                else if(exam.getQuestion(i).ans4.getText().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans4.getPoint();
+                }
+                else if(exam.getQuestion(i).ans5.getText().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans5.getPoint();
+                }
+            }
+            else
+            {
+                if(exam.getQuestion(i).ans1.getTexten().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans1.getPoint();
+                }
+                else if(exam.getQuestion(i).ans2.getTexten().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans2.getPoint();
+                }
+                else if(exam.getQuestion(i).ans3.getTexten().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans3.getPoint();
+                }
+                else if(exam.getQuestion(i).ans4.getTexten().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans4.getPoint();
+                }
+                else if(exam.getQuestion(i).ans5.getTexten().equalsIgnoreCase(userAns.get(i))){
+                    pts+=exam.getQuestion(i).ans5.getPoint();
+                }
+            }
+
+        }
+        Toast.makeText(getApplicationContext(), "points= " + pts, Toast.LENGTH_SHORT).show();
     }
 
     private void setBtnOnClick(){
+        set_question(exam.getQuestion(counter));
+        counter++;
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //set answer
 
                 if((counter)>=(exam.getqCount()-1)){
                     //new activity
+                    setPoints();
                     Toast.makeText(getApplicationContext(),"سوالات اتمام رسید!",Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(Test.this,ExamEnd.class);
+                    intent.putExtra("point",pts);
                     startActivity(intent);
                     finish();
                 }else {
@@ -336,7 +381,7 @@ public class Test extends AppCompatActivity {
 
     public void set_question(Question question){
         txtQuestion.setText(question.getQuestion());
-        String[] shuffleAns =new String[4];
+        String[] shuffleAns =new String[5];
 
         if(Language.equals("fa")){
             shuffleAns[0]= question.getans1().getText();
@@ -399,17 +444,24 @@ public class Test extends AppCompatActivity {
                         for(int i=0;i<Questions.length();i++){
                             JSONObject q = Questions.getJSONObject(i);
                             JSONArray Answers = q.getJSONArray("answers");
-                            Question.answer[] ans = new Question.answer[Answers.length()];
+                            ans = new Question.answer[Answers.length()];
                             for(int j=0;j<Answers.length();j++) {
-                                JSONObject a = Questions.getJSONObject(j);
+                                JSONObject a = Answers.getJSONObject(j);
+                                Log.e("tagsss", "lengh: " + Answers.length()+", " + a.getInt("id"));
+                                ans[j] = new Question.answer();
                                 ans[j].setId(a.getInt("id"));
                                 ans[j].setText(a.getString("answer"));
                                 ans[j].setTexten(a.getString("answer_en"));
                                 ans[j].setPoint(a.getInt("point"));
                                 ans[j].setQuestionId(a.getInt("questionId"));
                             }
-                            exam.add_Q(new Question(q.getString("question"), ans[0], ans[1], ans[2], ans[3], ans[5],q.getInt("id"), data.getInt("quiezTime")));
+                            exam.add_Q(new Question(q.getString("question"), ans[0], ans[1], ans[2], ans[3], ans[4],q.getInt("id"), data.getInt("quiezTime")));
                         }
+
+                        setRadioBtn();
+                        setBtnOnClick();
+
+                        updateView(Language);
                     }
                     else{
 

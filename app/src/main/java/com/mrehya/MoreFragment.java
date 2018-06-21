@@ -84,6 +84,21 @@ public class MoreFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        btnAboutUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(),AboutUs.class);
+                startActivity(intent);
+            }
+        });
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(),Settings.class);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
 

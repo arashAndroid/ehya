@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.icu.text.NumberFormat;
 import android.media.Image;
@@ -166,7 +167,8 @@ public class MakeResume extends AppCompatActivity {
             LinearLayoutMakeResume.setVisibility(View.VISIBLE);
             startDialog(StartDialog,"بارگذاری اطلاعات کاربری","Loading user information",1,false);
             StartDialog.setProgress(10);
-            get_credentials(session.getUserDetails().getToken(), session.getUserDetails().getEmail(), session.getUserDetails().getPassword());
+            checkLogin(session.getUserDetails().getEmail(), session.getUserDetails().getPassword());
+//            get_credentials(session.getUserDetails().getToken(), session.getUserDetails().getEmail(), session.getUserDetails().getPassword());
         }
         else{
             LinearLayoutMakeResume.setVisibility(View.GONE);
@@ -377,7 +379,11 @@ public class MakeResume extends AppCompatActivity {
         });
         StartDialog.setProgress(100);
         updateView(Language);
-        get_resume_api();
+        if(session.getUserDetails().getResume()!=null)
+        {
+            get_resume_api();
+        }
+
         hideDialog(StartDialog);
 
 
@@ -387,13 +393,15 @@ public class MakeResume extends AppCompatActivity {
         LinearLayoutDegree = (LinearLayout) findViewById(R.id.LinearLayoutDegree);
         LinearLayoutJobEduLang = (LinearLayout) findViewById(R.id.LinearLayoutJobEduLang);
 
-        int resume = Integer.getInteger(session.getUserDetails().getResume());
-        if(session.getUserDetails().getResume()== null || resume==0)
+        int resume = 0;
+        Log.e("resume ISISISI",session.getUserDetails().getResume()+"");
+        if(session.getUserDetails().getResume()== null)
         {
             Log.d("resume1", "resume1: " + resume);
             hideshow(1);
         }
         else{
+            resume = Integer.parseInt(session.getUserDetails().getResume());
             Log.d("resume2",resume+"");
             hideshow(2);
         }
@@ -1553,6 +1561,99 @@ public class MakeResume extends AppCompatActivity {
         spinnerPIMilitaryservice.setAdapter(PIMilitaryservice);
 
     }
+
+    private void checkLogin (final String email , final String password){
+
+        String tag_string_req = "req_login";
+        Log.e("TAG", "Login creds: " +email + "" + password);
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_SIGNIN, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d("TAG", "Login Response: " + response.toString());
+
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    String success = jObj.getString("success");
+
+                    // Check for error node in json
+                    if (success.equalsIgnoreCase("true")) {
+                        // user successfully logged in
+                        JSONObject c = jObj.getJSONObject("data");
+                        get_credentials(c.getString("token"), c.getString("username"), password);
+                    } else {
+                        // Error in login. Get the error message
+                        if(Language.equals("fa")){
+                            Toast.makeText(getApplicationContext(), "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
+                        }
+
+                        else{
+                            Toast.makeText(getApplicationContext(), "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
+                        }
+                        hideDialog(StartDialog);
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    Log.d("TAG", "error 1 ");
+                    e.printStackTrace();
+                    if(Language.equals("fa")){
+                        Toast.makeText(getApplicationContext(), "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
+                    }
+
+                    else{
+                        Toast.makeText(getApplicationContext(), "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
+                    }
+                    hideDialog(StartDialog);
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG",  "ایمیل موجود نمی‌باشد" + " " + error.getMessage());
+                if(Language.equals("fa")){
+                    Toast.makeText(getApplicationContext(), "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
+                }
+
+                else{
+                    Toast.makeText(getApplicationContext(), "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
+                }
+                hideDialog(StartDialog);
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+
+                params.put("email", email);
+                params.put("password", password);
+                params.put("type", "1");
+                return params;
+            }
+
+
+            //basic auth
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String,String> headers = new HashMap<String, String>();
+                // add headers <key,value>
+                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(),
+                        Base64.URL_SAFE|Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+                return headers;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
     private void get_credentials(final String token, final String email, final String passwordd){
         StartDialog.setProgress(20);
         StartDialog.setProgress(30);
@@ -1585,27 +1686,28 @@ public class MakeResume extends AppCompatActivity {
                         address = c.getString("address");
                         zip = c.getString("postal_code");
                         if(c.has("resumeId"))
-                            resume =c.getString("resumeId");
+                            resume = c.getInt("resumeId")+"";
                         else
-                            resume =c.getString(null);
+                            resume =null;
                         password = passwordd;
                         session.setLogin(true);
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password
                                 ,resume);
+                        start();
 
                     } else {
                         Log.d("TAG", "failed to get user");
+                        hideDialog(StartDialog);
                     }
                     JobCats_Api();
-                    start();
+
 
                 } catch (JSONException e) {
                     // JSON error
                     Log.d("TAG", "get creds error 1 ");
                     e.printStackTrace();
                     JobCats_Api();
-                    start();
-
+                    hideDialog(StartDialog);
                 }
 
             }
@@ -1615,8 +1717,7 @@ public class MakeResume extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG",  "get creds error2 : " + error.getMessage());
                 JobCats_Api();
-                start();
-
+                hideDialog(StartDialog);
             }
         }) {
 
@@ -1629,17 +1730,17 @@ public class MakeResume extends AppCompatActivity {
 
 
             //basic auth
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> headers = new HashMap<String, String>();
-                // add headers <key,value>
-                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.URL_SAFE|Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String,String> headers = new HashMap<String, String>();
+//                // add headers <key,value>
+//                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
+//                String auth = "Basic "
+//                        + Base64.encodeToString(credentials.getBytes(),
+//                        Base64.URL_SAFE|Base64.NO_WRAP);
+//                headers.put("Authorization", auth);
+//                return headers;
+//            }
 
         };
         // Adding request to request queue
@@ -1670,6 +1771,7 @@ public class MakeResume extends AppCompatActivity {
                 } catch (JSONException e) {
                     // JSON error
                     Log.d("TAG", "error 1 " + e.getMessage());
+                    hideDialog(StartDialog);
                 }
 
             }
@@ -1678,6 +1780,7 @@ public class MakeResume extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG",  "error2"+error.getMessage());
+                hideDialog(StartDialog);
             }
         }) {
             //basic auth
@@ -1865,7 +1968,7 @@ public class MakeResume extends AppCompatActivity {
     }
     private void get_resume_api(){
         String tag_string_req = "req_login";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
+        StringRequest strReq = new StringRequest(Request.Method.GET,
                 AppConfig.URL_GETAPI_RESUME + session.getUserDetails().getResume() , new Response.Listener<String>() {
 
             @Override
@@ -1942,20 +2045,22 @@ public class MakeResume extends AppCompatActivity {
                                 academics,
                                 languages);
 
-
+                        start();
 
                     } else {
                         Log.d("TAG", "failed to get user");
+                        hideDialog(StartDialog);
                     }
                     JobCats_Api();
-                    start();
+
+
 
                 } catch (JSONException e) {
                     // JSON error
                     Log.d("TAG", "get creds error 1 ");
                     e.printStackTrace();
                     JobCats_Api();
-                    start();
+                    hideDialog(StartDialog);
 
                 }
 
@@ -1966,7 +2071,7 @@ public class MakeResume extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG",  "get creds error2 : " + error.getMessage());
                 JobCats_Api();
-                start();
+                hideDialog(StartDialog);
 
             }
         }) {
@@ -1980,17 +2085,17 @@ public class MakeResume extends AppCompatActivity {
 
 
             //basic auth
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> headers = new HashMap<String, String>();
-                // add headers <key,value>
-                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.URL_SAFE|Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                HashMap<String,String> headers = new HashMap<String, String>();
+//                // add headers <key,value>
+//                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
+//                String auth = "Basic "
+//                        + Base64.encodeToString(credentials.getBytes(),
+//                        Base64.URL_SAFE|Base64.NO_WRAP);
+//                headers.put("Authorization", auth);
+//                return headers;
+//            }
 
         };
         // Adding request to request queue

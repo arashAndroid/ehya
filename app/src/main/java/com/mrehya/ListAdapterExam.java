@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -133,7 +134,7 @@ public class ListAdapterExam extends RecyclerView.Adapter<ListAdapterExam.MyView
 
     public void show_dialog(Exam exam){
 
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(activity);
         dialog.setContentView(R.layout.dialog_show_exam);
 
         imgShowImg                      = dialog.findViewById(R.id.imgShowImg);
@@ -187,6 +188,14 @@ public class ListAdapterExam extends RecyclerView.Adapter<ListAdapterExam.MyView
                 dialog.dismiss();
             }
         });
+
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        updateView_dialog();
+        dialog.show();
+        dialog.getWindow().setLayout((12 * width)/13, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
     private String updatelanguage(Context context){
         Paper.init(context);
