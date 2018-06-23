@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,9 +127,13 @@ public class ListAdapterExam extends RecyclerView.Adapter<ListAdapterExam.MyView
         });
         Glide.with(context)
                 .load(list.get(position).getImage())
-                .placeholder(R.drawable.logo_persian)
+                .placeholder(R.drawable.logo_persian_placeholder)
                 .error(R.drawable.logo_persian_placeholder)
+                .override(52, 52)
+                .dontAnimate()
                 .into(holder.imgbtnLogo);
+        String s = list.get(position).getImage();
+        Log.e("thumb_address" , s);
     }
 
 
@@ -160,10 +165,10 @@ public class ListAdapterExam extends RecyclerView.Adapter<ListAdapterExam.MyView
         //set inputs
         Glide.with(context)
                 .load(exam.getImage())
-                .placeholder(R.drawable.logo_persian)
+                .placeholder(R.drawable.logo_persian_placeholder)
                 .error(R.drawable.logo_persian_placeholder)
+                .override(240, 240)
                 .into(imgShowImg);
-
         txtExamTitle.setText(exam.getName());
         txtExamType.setText(exam.getType());
         txtExamPrice.setText(exam.getPrice());

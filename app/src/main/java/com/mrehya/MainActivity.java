@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         //new
         bnve = (BottomNavigationViewEx) findViewById(R.id.bnve);
-
+        Typeface tf = Typeface.createFromAsset(getAssets(), "IRANSans.ttf");
+        bnve.setTypeface(tf);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         alarmScheduler();
         bnve.enableShiftingMode(false);

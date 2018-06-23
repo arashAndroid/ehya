@@ -49,8 +49,8 @@
             <android.support.design.widget.FloatingActionButton
                 android:layout_gravity="center"
                 android:id="@+id/fab"
-                app:backgroundTint="#3382fb"
-                app:rippleColor="#81d4fa"
+                app:backgroundTint="#6bbd3e"
+                app:rippleColor="#b2ff59"
                 app:elevation="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

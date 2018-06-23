@@ -92,7 +92,7 @@ public class ChooseExam extends AppCompatActivity {
         startDialog();
         String tag_string_req = "req_Exams";
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                AppConfig.URL_DashExam+"2", new Response.Listener<String>() {
+                AppConfig.URL_DashExam+"1", new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -177,7 +177,7 @@ public class ChooseExam extends AppCompatActivity {
 
         for (int i = 0; i < data.length()-1; i++) {
             JSONObject c = data.getJSONObject(i + "");
-            Log.d("Fragment part String: ", c.toString());
+            Log.d("Fragment part String: ", c.getJSONObject("image").getString("thumb"));
 
             if (Language.equals("fa")) {
                 listExams.add(new Exam(c.getInt("id"),c.getString("title"),

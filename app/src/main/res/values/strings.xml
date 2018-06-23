@@ -113,6 +113,7 @@
     <string name="UserInfo">اطلاعات کاربری</string>
     <string name="UserInfo2">اطلاعات خرید و استخدام</string>
     <string name="SignInOrUp">ورود / ثبت نام</string>
+    <string name="LogOut">خروج</string>
     <string name="EditProfile">ویرایش پروفایل</string>
     <string name="showPurchases">مشاهده خریدها</string>
     <string name="hireRequestStatus">وضعیت درخواست‌های استخدام</string>
@@ -146,9 +147,6 @@
 
     <!--Make Resume-->
     <string name="JobTitle2"> عنوان شغلی: </string>
-    <string name="UnderJobTitle"> این دیده نمیشه چیه </string>
-    <string name="UnderJobTitle2"> این دیده نمیشه چیه : </string>
-    <string name="LastDegree">مدرک تحصیلی</string>
     <string name="LastDegreeTitle">آخرین مدرک تحصیلی:</string>
     <string name="Edit">ویرایش</string>
     <string name="PrivateInfo">اطلاعات فردی</string>
@@ -299,10 +297,16 @@
     <string name="From">از:</string>
     <string name="until">تا:</string>
     <string name="major">رشته و گرایش:  </string>
-    <string name="educationplace">محل تحصیل: </string>
+    <string-array name="langs">
+        <item>فارسی</item>
+        <item>انگلیسی</item>
+        <item>عربی</item>
+    </string-array>
 
     <string name="PIEditPersonalInfo">ویرایش اطلاعات فردی</string>
     <string name="PIEmailAddress">آدرس ایمیل</string>
+    <string name="LastDegree">آخرین مدرک تحصیلی</string>
+    <string name="educationplace">محل تحصیل:</string>
     <string name="PIMobile">موبایل</string>
     <string name="PIProvince">استان</string>
     <string name="PIBirthYear">سال تولد</string>

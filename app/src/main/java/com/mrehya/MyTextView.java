@@ -24,7 +24,7 @@ public class MyTextView extends TextView {
 
     private void init() {
         if (!isInEditMode()) {
-            Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "BHoma.ttf");
+            Typeface tf = Typeface.createFromAsset(getContext().getAssets(), "IRANSans.ttf");
             setTypeface(tf);
         }
     }

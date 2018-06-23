@@ -25,6 +25,7 @@
     <string name="UserInfo">اطلاعات کاربری</string>
     <string name="UserInfo2">اطلاعات خرید و استخدام</string>
     <string name="SignInOrUp">ورود / ثبت نام</string>
+    <string name="LogOut">خروج</string>
     <string name="EditProfile">ویرایش پروفایل</string>
     <string name="showPurchases">مشاهده خریدها</string>
     <string name="hireRequestStatus">وضعیت درخواست‌های استخدام</string>
@@ -153,7 +154,6 @@
 
     <!--Make Resume-->
     <string name="JobTitle2"> عنوان شغلی: </string>
-    <string name="LastDegree">مدرک تحصیلی</string>
     <string name="LastDegreeTitle">آخرین مدرک تحصیلی:</string>
     <string name="Edit">ویرایش</string>
     <string name="PrivateInfo">اطلاعات فردی</string>
@@ -186,7 +186,14 @@
     <string name="AboutMe2">درباره من</string>
     <string name="AboutMe">درباره من</string>
     <string name="Salary">سرمایه</string>
-
+    <string-array name="benefitArray">
+        <item>امکان ترفیع سمت</item>
+        <item>بیمه</item>
+        <item>دوره‌های آموزشی</item>
+        <item>غذا به عهده‌ی شرکت</item>
+        <item>ساعت کاری منعطف</item>
+        <item>سرویس رفت و‌آمد</item>
+    </string-array>
     <!--Medical Services-->
     <!--<string name="MainMenu">Main Menu</string>-->
     <string name="Onlineclinicbookkeeping">نوبت دهی اینترنتی</string>
@@ -288,9 +295,10 @@
     <string name="post">سمت:</string>
     <string name="Company">شرکت:</string>
     <string name="From">از:</string>
+    <string name="LastDegree">آخرین مدرک تحصیلی</string>
     <string name="until">تا:</string>
     <string name="major">رشته و گرایش:  </string>
-    <string name="educationplaceeducationplace">محل تحصیل: </string>
+    <string name="educationplace">محل تحصیل:</string>
 
     <string name="Militaryservice">وضعیت خدمت سربازی</string>
     <string-array name="Militaryservice_arrays">

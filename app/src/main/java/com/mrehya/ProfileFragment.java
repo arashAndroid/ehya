@@ -3,11 +3,13 @@ package com.mrehya;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -43,7 +45,7 @@ public class ProfileFragment extends Fragment {
 
     SessionManager sessionManager;
     Button btnSignInOrUp,showPurchases,hireRequestStatus,btnEditProfile,BtnInstagram,btnTelegram;
-
+    AlertDialog ad ;
     //new
     MyTextView profileType,mytextUserInfo,mytextUserInfo2;
     LinearLayout LinearLayoutprofile1,LinearLayoutprofile2,LinearLayoutprofile3,LinearLayoutprofile4
@@ -94,8 +96,32 @@ public class ProfileFragment extends Fragment {
         btnSignInOrUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(),LoginOrSignup.class);
-                startActivity(intent);
+                if (session.isLoggedIn()){
+                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setMessage("آیا واقعا میخواهید خارج شوید؟");
+
+                    alertDialogBuilder.setPositiveButton("بله", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            session.setLogin(false);
+                            Intent intent = new Intent(getActivity() , Language.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton("خیر", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ad.dismiss();
+                        }
+                    });
+                    ad = alertDialogBuilder.create();
+                    ad.show();
+                }else{
+                    Intent intent = new Intent(getActivity(),LoginOrSignup.class);
+                    startActivity(intent);
+                }
+
             }
         });
         hireRequestStatus.setOnClickListener(new View.OnClickListener() {
@@ -268,8 +294,10 @@ public class ProfileFragment extends Fragment {
             BtnInstagram.setGravity(Gravity.LEFT|Gravity.CENTER);
             btnTelegram.setGravity(Gravity.LEFT|Gravity.CENTER);
         }
-
         btnSignInOrUp.setText(resources.getString(R.string.SignInOrUp));
+        if (session.isLoggedIn()){
+            btnSignInOrUp.setText(resources.getString(R.string.LogOut));
+        }
         showPurchases.setText(resources.getString(R.string.showPurchases));
         hireRequestStatus.setText(resources.getString(R.string.hireRequestStatus));
         btnEditProfile.setText(resources.getString(R.string.EditProfile));

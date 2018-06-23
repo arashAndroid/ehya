@@ -25,6 +25,7 @@
     <string name="UserInfo">User Info</string>
     <string name="UserInfo2">Requests and Purchases</string>
     <string name="SignInOrUp">Login / Register</string>
+    <string name="LogOut">Logout</string>
     <string name="EditProfile">Edit Profile</string>
     <string name="showPurchases">show Purchases</string>
     <string name="hireRequestStatus">Hire Request Status</string>
@@ -68,7 +69,6 @@
     <string name="GenderResumeTitle">Gender:  </string>
     <string name="BirthYearResumeTitle">Year of Birth:  </string>
     <string name="DutyResumeTitle">Military service status: </string>
-    <string name="DutyResume">Done </string>
     <string name="AddressResumeTitle">Address:  </string>
     <string name="Talents">Professional skills </string>
     <string name="JobExp">work experience</string>
@@ -181,6 +181,7 @@
         <item>Persian</item>
     </string-array>
 
+    <string name="LastDegree">Last degree</string>
     <string-array name="Province">
         <item>East Azarbaijan</item>
         <item>West Azarbaijan</item>
@@ -244,7 +245,14 @@
 
     <!--edit profile-->
     <string name="save">Save</string>
-
+    <string-array name="benefitArray">
+        <item>امکان ترفیع سمت</item>
+        <item>بیمه</item>
+        <item>دوره‌های آموزشی</item>
+        <item>غذا به عهده‌ی شرکت</item>
+        <item>ساعت کاری منعطف</item>
+        <item>سرویس رفت و‌آمد</item>
+    </string-array>
     <!--SHOW hire-->
     <string name="JobTitleShowhire">Job title: </string>
     <string name="JobTimeShowhire">Cooperation type: </string>
