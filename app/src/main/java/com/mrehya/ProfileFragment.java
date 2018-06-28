@@ -51,7 +51,7 @@ public class ProfileFragment extends Fragment {
     LinearLayout LinearLayoutprofile1,LinearLayoutprofile2,LinearLayoutprofile3,LinearLayoutprofile4
             ,LinearLayoutprofile5,LinearLayoutprofile6;
 
-
+    MyTextView profname;
     TextView txtEditName,txtEditLastName,txtEditEmail,txtEditMobile,txtEditPhone,txtEditZip,txtEditAddress;
     TextView txtEditProfile,txtName,txtLastname,txtEmail,txtPhoneNumber,txtTelephone,txtPostcode,txtAddress;
 
@@ -89,6 +89,8 @@ public class ProfileFragment extends Fragment {
         btnTelegram = view.findViewById(R.id.btnTelegram);
         BtnInstagram = view.findViewById(R.id.BtnInstagram);
 
+        profname = view.findViewById(R.id.profileName);
+        profname.setText(session.getUserDetails().getFirstname());
         Language = updateLanguage();
         updateView((String) Paper.book().read("language"));
 

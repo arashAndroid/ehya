@@ -92,7 +92,7 @@ public class ChooseExam extends AppCompatActivity {
         startDialog();
         String tag_string_req = "req_Exams";
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                AppConfig.URL_DashExam+"1", new Response.Listener<String>() {
+                AppConfig.URL_DashExam+"2", new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {

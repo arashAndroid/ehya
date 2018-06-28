@@ -94,7 +94,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:text="نسخه‌ی ۱٫۳"
+        android:text="نسخه‌ی ۱.۳"
         android:textColor="@color/textColorBlack"
         android:textSize="@dimen/textSize1"
         android:layout_margin="10dp"

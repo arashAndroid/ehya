@@ -34,7 +34,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:gravity="center"
-                        android:text="کاربر عادی"
+                        android:text=""
                         android:textColor="@color/textColorWhite"
                         android:textSize="@dimen/textSize2" />
 
