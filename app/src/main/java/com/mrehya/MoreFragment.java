@@ -65,10 +65,11 @@ public class MoreFragment extends Fragment {
         btnMedicalServices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(),MedicalService.class);
+                Intent intent = new Intent(getActivity(),Reserve.class);
                 startActivity(intent);
             }
         });
+
         btnShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

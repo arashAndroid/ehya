@@ -89,6 +89,7 @@ public class HireFragment extends Fragment {
         mbuilderIntouchs = new AlertDialog.Builder(getActivity());
 
         btnNavigation = (Button)view.findViewById(R.id.btnNavigation);
+        btnNavigation.setVisibility(view.GONE);
         btnNavigation.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -114,6 +115,7 @@ public class HireFragment extends Fragment {
             }
         });
         btnJobCats = view.findViewById(R.id.btnJobCats);
+        btnJobCats.setVisibility(view.GONE);
         btnJobCats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,6 +139,7 @@ public class HireFragment extends Fragment {
             }
         });
         btnIntouch = view.findViewById(R.id.btnIntouch);
+        btnIntouch.setVisibility(view.GONE);
         btnIntouch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

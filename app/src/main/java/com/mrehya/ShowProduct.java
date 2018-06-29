@@ -31,6 +31,7 @@ public class ShowProduct extends AppCompatActivity {
     Product product;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
+    SessionManager session;
     String CART_TAG = "سبد خرید (";
 
     //new
@@ -39,6 +40,7 @@ public class ShowProduct extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_product);
+        session = new SessionManager(getApplicationContext());
         product =(Product) getIntent().getSerializableExtra("Product");
         product.setStock(product.stock);
         prefs = getApplicationContext().getSharedPreferences("ehya", 0);
@@ -99,49 +101,54 @@ public class ShowProduct extends AppCompatActivity {
         btnBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean exists = false;
-                ArrayList<Integer> cartList = loadArray("cart_list",getApplicationContext());
-                ArrayList<Integer> cartListCount = loadArray("cart_list_count",getApplicationContext());
-                for (int i=0;i<cartList.size();i++){
-                    if (cartList.get(i) == product.getId()){
-                        exists = true;
-                        break;
+                if (session.isLoggedIn()){
+                    boolean exists = false;
+                    ArrayList<Integer> cartList = loadArray("cart_list",getApplicationContext());
+                    ArrayList<Integer> cartListCount = loadArray("cart_list_count",getApplicationContext());
+                    for (int i=0;i<cartList.size();i++){
+                        if (cartList.get(i) == product.getId()){
+                            exists = true;
+                            break;
+                        }
                     }
-                }
-                if(exists){
-                    if(Language.equals("fa")) {
-                        Toast.makeText(getApplicationContext(),"محصول در سبد خرید وجود دارد",Toast.LENGTH_SHORT).show();
+                    if(exists){
+                        if(Language.equals("fa")) {
+                            Toast.makeText(getApplicationContext(),"محصول در سبد خرید وجود دارد",Toast.LENGTH_SHORT).show();
 //                        Toast.makeText(getApplicationContext(),cartList.toString(),Toast.LENGTH_SHORT).show();
 //                        Toast.makeText(getApplicationContext(),cartListCount.toString(),Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(),"Already added this",Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"Already added this",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }else{
+
+                        cartList.add(product.getId());
+                        cartListCount.add(Integer.parseInt(txtCount.getText().toString()));
+                        saveArray(cartList,"cart_list",getApplicationContext());
+                        saveArray(cartListCount,"cart_list_count",getApplicationContext());
+
+                        if(Language.equals("fa")) {
+                            Toast.makeText(getApplicationContext(),"محصول به  سبد خرید اضافه شد",Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"Item added to cart!",Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
+                    Log.e("cartListSize: ","size= "+cartList.size());
+                    Log.e("cartListSizeCount: ","sizeCount= "+cartListCount.size());
+                    for (int i=0;i<cartList.size();i++){
+                        Log.e("cartList: ","id= "+cartList.get(i));
+                        Log.e("cartListCount: ","count= "+cartListCount.get(i));
+                    }
                 }else{
-
-                    cartList.add(product.getId());
-                    cartListCount.add(Integer.parseInt(txtCount.getText().toString()));
-                    saveArray(cartList,"cart_list",getApplicationContext());
-                    saveArray(cartListCount,"cart_list_count",getApplicationContext());
-
-                    if(Language.equals("fa")) {
-                        Toast.makeText(getApplicationContext(),"محصول به  سبد خرید اضافه شد",Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(),"Item added to cart!",Toast.LENGTH_SHORT).show();
-                    }
-
+                    Toast.makeText(getApplicationContext(),"برای خرید محصول ابتدا باید وارد شوید.",Toast.LENGTH_SHORT).show();
                 }
 
-                Log.e("cartListSize: ","size= "+cartList.size());
-                Log.e("cartListSizeCount: ","sizeCount= "+cartListCount.size());
-                for (int i=0;i<cartList.size();i++){
-                    Log.e("cartList: ","id= "+cartList.get(i));
-                    Log.e("cartListCount: ","count= "+cartListCount.get(i));
-                }
 
             }
         });

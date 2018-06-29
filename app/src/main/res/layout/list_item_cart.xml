@@ -114,10 +114,11 @@
                 android:layout_height="150dp">
 
                 <ImageView
+                    android:scaleType="fitXY"
                     android:id="@+id/imgProductCart"
                     android:src="@drawable/p11"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent" />
             </android.support.v7.widget.CardView>
 
         </LinearLayout>

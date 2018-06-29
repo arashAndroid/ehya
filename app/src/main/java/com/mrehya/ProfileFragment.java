@@ -70,6 +70,7 @@ public class ProfileFragment extends Fragment {
         btnSignInOrUp = view.findViewById(R.id.btnSignInOrUp);
         showPurchases = view.findViewById(R.id.showPurchases);
         hireRequestStatus = view.findViewById(R.id.hireRequestStatus);
+        hireRequestStatus.setVisibility(View.GONE);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         context =view.getContext();
         pDialog = new ProgressDialog(context);

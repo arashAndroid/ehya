@@ -3,6 +3,7 @@ package com.mrehya;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 /**
@@ -26,12 +29,16 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
     private ArrayList<Product> list = new ArrayList<>();
     private Context context;
     private Activity activity;
-
-
-    public ListAdapterCart(ArrayList<Product> list, Context context, Activity activity) {
+    ArrayList<Integer> cartListCount = new ArrayList<>();
+    ArrayList<Integer> cartList = new ArrayList<>();
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
+    public ListAdapterCart(ArrayList<Product> list, Context context, Activity activity,ArrayList<Integer> cartListCount,ArrayList<Integer> cartList) {
         this.list = list;
         this.context = context;
         this.activity = activity;
+        this.cartListCount = cartListCount;
+        this.cartList = cartList;
     }
 
     @Override
@@ -57,7 +64,8 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_item_cart, null);
         }
-
+        prefs = context.getSharedPreferences("ehya", 0);
+        editor = prefs.edit();
         //Handle TextView and display string from your list
         TextView txtTitleCart = (TextView)view.findViewById(R.id.txtTitleCart);
         TextView txtPriceCart = (TextView)view.findViewById(R.id.txtPriceCart);
@@ -66,7 +74,7 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
         ImageButton btnPlusOneCart = view.findViewById(R.id.btnPlusOneCart);
         ImageButton btnMinusOneCart = view.findViewById(R.id.btnMinusOneCart);
         ImageView imgProductCart = view.findViewById(R.id.imgProductCart);
-
+        txtCountCart.setText("" + cartListCount.get(position));
         txtTitleCart.setText(list.get(position).getTitle());
         txtPriceCart.setText(list.get(position).getPrice());
         if (list.get(position).getSale()==1){
@@ -76,7 +84,11 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
             txtSalePriceCart.setText(" ");
         }
 
-
+        Glide.with(context)
+                .load(list.get(position).getImage())
+                .placeholder(R.drawable.logo_eng)
+                .error(R.drawable.logo_eng)
+                .into(imgProductCart);
         //Handle buttons and add onClickListeners
         ImageButton btnDeleteCart =view.findViewById(R.id.btnDeleteCart);
 
@@ -85,7 +97,11 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 //do something
                 list.remove(position); //or some other task
+                cartListCount.remove(position);
+                cartList.remove(position);
                 notifyDataSetChanged();
+                saveArray(cartList,"cart_list",context);
+                saveArray(cartListCount,"cart_list_count",context);
             }
         });
         btnMinusOneCart.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +111,9 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
                 if (count>0){
                     count--;
                     txtCountCart.setText(String.valueOf(count));
+                    cartListCount.set(position, count);
+                    saveArray(cartListCount,"cart_list_count",context);
+
                 }
             }
         });
@@ -105,6 +124,8 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
                 if (count < list.get(position).getStock()){
                     count++;
                     txtCountCart.setText(String.valueOf(count));
+                    cartListCount.set(position, count);
+                    saveArray(cartListCount,"cart_list_count",context);
                 }else{
                     Toast.makeText(context,"بیش از این مقدار موجود نیست",Toast.LENGTH_SHORT).show();
                 }
@@ -113,6 +134,14 @@ public class ListAdapterCart extends BaseAdapter implements ListAdapter {
 
         return view;
     }
+    public boolean saveArray(ArrayList<Integer> array, String arrayName, Context mContext) {
+        editor.putInt(arrayName +"_size", array.size());
+        for(int i=0;i<array.size();i++)
+            editor.putInt(arrayName + "_" + i, array.get(i));
+        editor.commit();
+        return true;
+    }
+
     private int translateNumToEng(String num){
         String str = num.replace('۰','0');
         str = str.replace('۱','1');
