@@ -27,7 +27,6 @@
             <com.mrehya.MyTextView
                 android:layout_below="@id/thumbnail"
                 android:layout_centerHorizontal="true"
-                android:gravity="center"
                 android:text="title"
                 android:id="@+id/title"
                 android:layout_width="wrap_content"

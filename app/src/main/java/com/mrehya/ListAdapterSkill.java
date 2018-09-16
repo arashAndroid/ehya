@@ -53,7 +53,7 @@ public class ListAdapterSkill extends BaseAdapter implements ListAdapter {
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.list_item_terms, null);
+            view = inflater.inflate(R.layout.list_item_skill, null);
         }
         String province = list.get(position);
         //Handle TextView and display string from your list

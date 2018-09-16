@@ -41,7 +41,7 @@
             <TextView
                 android:id="@+id/txtTitleCart"
                 android:layout_gravity="center"
-                android:textSize="@dimen/textSize1"
+                android:textSize="15dp"
                 android:text="عنوان"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -54,7 +54,7 @@
                 <TextView
                     android:id="@+id/txtPriceCart"
                     android:layout_gravity="center"
-                    android:textSize="@dimen/textSize1"
+                    android:textSize="15dp"
                     android:text="۲۰۰۰۰"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -63,7 +63,7 @@
                     android:layout_marginRight="10dp"
                     android:textColor="@color/red"
                     android:layout_gravity="center"
-                    android:textSize="@dimen/textSize1"
+                    android:textSize="15dp"
                     android:text="۱۵۰۰۰"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

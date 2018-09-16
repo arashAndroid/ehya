@@ -4,8 +4,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,7 +26,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.mrehya.DashboardPackage.DashboardLists;
 import com.mrehya.Helper.LocaleHelper;
+import com.mrehya.Hire.HireAdapter;
+import com.mrehya.Hire.HireCompanies;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +45,7 @@ import io.paperdb.Paper;
 
 public class HireFragment extends Fragment {
 
-
+    private SessionManager session;
     private RecyclerView recyclerView;
     private HireAdapter adapter;
     private List<HireCompanies> companyList;
@@ -64,6 +67,9 @@ public class HireFragment extends Fragment {
     private TextView txtEmptyHires;
     View view;
     Context context;
+
+    private String jobcats="", contracts="", provinces="", status ="0", hireStatus="0";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,16 +78,8 @@ public class HireFragment extends Fragment {
         view= inflater.inflate(R.layout.fragment_hire, container, false);
         context =view.getContext();
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
+        session = new SessionManager(this.getContext());
         pDialog = new ProgressDialog(context);
-
-        companyList = new ArrayList<>();
-        adapter = new HireAdapter(getContext(), companyList);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
 
         //Filters
         mbuilderNav = new AlertDialog.Builder(getActivity());
@@ -89,7 +87,7 @@ public class HireFragment extends Fragment {
         mbuilderIntouchs = new AlertDialog.Builder(getActivity());
 
         btnNavigation = (Button)view.findViewById(R.id.btnNavigation);
-        btnNavigation.setVisibility(view.GONE);
+        //btnNavigation.setVisibility(view.GONE);
         btnNavigation.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -115,7 +113,7 @@ public class HireFragment extends Fragment {
             }
         });
         btnJobCats = view.findViewById(R.id.btnJobCats);
-        btnJobCats.setVisibility(view.GONE);
+        //btnJobCats.setVisibility(view.GONE);
         btnJobCats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,7 +137,7 @@ public class HireFragment extends Fragment {
             }
         });
         btnIntouch = view.findViewById(R.id.btnIntouch);
-        btnIntouch.setVisibility(view.GONE);
+        //btnIntouch.setVisibility(view.GONE);
         btnIntouch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,40 +165,37 @@ public class HireFragment extends Fragment {
         mytextHirePerson = view.findViewById(R.id.mytextHirePerson);
         txtEmptyHires = view.findViewById(R.id.txtEmptyHires);
         Language = updateLanguage();
-
-        Hire_Api(Language);
-        Intouch_Api(Language);
-        Province_Api(Language);
-        Jobcat_Api(Language);
-
         //new
+
+        reloadlist();
+        fastList();
+        new LoadAllTask().execute(0);
         updateView(Language);
         return view;
     }
 
+    private void fastList(){
+        if(jobcats.equals("") && contracts.equals("") && provinces.equals("") && DashboardLists.Companiesdata.length()>0){
+            JSONObject data = DashboardLists.Companiesdata;
+            try {
+                if(data.getInt("totalPage")==0){
+                    if(Language.equals("fa"))
+                        txtEmptyHires.setText("تبلیغی یافت نشد");
+                    else
+                        txtEmptyHires.setText("Empty Hire Advertisements!");
+                    txtEmptyHires.setVisibility(View.VISIBLE);
+                }
+                else{
 
-    private void Hire_Api(final String Language){
-        startDialog();
-        String tag_string_req = "req_Province";
-        StringRequest strReq = new StringRequest(Request.Method.GET,
-                AppConfig.URL_Hires, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d("TAG", "Hires Response: " + response.toString());
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    JSONObject data = jObj.getJSONObject("data");
                     if(data.length()>0){
                         txtEmptyHires.setVisibility(View.GONE);
-                            for (int i = 0; i < data.length()-1; i++) {
-                                JSONObject c = data.getJSONObject(i+"");
-                                Log.d("TAG", c.toString());
-                                HireCompanies a = new HireCompanies(c.getInt("id"),c.getString("image"),c.getString("job_title"),c.getString("brand_name"),c.getString("job_title"),c.getString("province")
-                                ,c.getString("job_description"));
-                                companyList.add(a);
-                            }
-
+                        for(int i = 0; i < data.length()-1; i++) {
+                            JSONObject c = data.getJSONObject(i+"");
+                            //Log.d("TAG", c.toString());
+                            HireCompanies a = new HireCompanies(c.getInt("id"),c.getString("image"),c.getString("job_title"),c.getString("brand_name"),c.getString("job_title"),c.getString("province")
+                                    ,c.getString("job_description"));
+                            companyList.add(a);
+                        }
                         adapter.notifyDataSetChanged();
                     }
                     else{
@@ -210,12 +205,120 @@ public class HireFragment extends Fragment {
                             txtEmptyHires.setText("Empty Hire Advertisements!");
                         txtEmptyHires.setVisibility(View.VISIBLE);
                     }
-                    Log.d("TAG", "No Object recieved!");
-                    hideDialog();
-                } catch (JSONException e) {
-                    // JSON error
-                    Log.d("TAG", "error 1 " + e.getMessage());
-                    //e.printStackTrace();
+                }
+                hideDialog();
+            } catch (JSONException e) {
+                hideDialog();
+                e.printStackTrace();
+            }
+            hireStatus="1";
+            hideDialog();
+        }
+        else{
+            new LoadAllTask().execute(0);
+        }
+    }
+    class LoadAllTask extends AsyncTask<Integer, Integer, String> {
+        @Override
+        protected String doInBackground(Integer... params) {
+            try {
+                Thread.sleep(1000);
+                if(!(jobcats.equals("") && contracts.equals("") && provinces.equals("") && DashboardLists.Companiesdata.length()>0)) {
+                    Hire_Api(Language);
+                }
+                if(status.equals("0")){
+                    Intouch_Api(Language);
+                    Province_Api(Language);
+                    Jobcat_Api(Language);
+                    status="1";
+                }
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "Task Completed.";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            // do whatever needs to be done next
+        }
+        @Override
+        protected void onPreExecute() {
+            if(Language.equals("fa")){
+                Toast.makeText(context, "در حال بارگزاری...", Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(context, "Loading...", Toast.LENGTH_SHORT).show();
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+        }
+    }
+    private void Hire_Api(final String Language){
+            String tag_string_req = "req_hires";
+            StringRequest strReq = new StringRequest(Request.Method.POST,
+                    AppConfig.URL_Hires+Language, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    //Log.d("req_hires", "Hires Response: " + response.toString());
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        JSONObject data = jObj.getJSONObject("data");
+                        if(data.getInt("totalPage")==0){
+                            if(Language.equals("fa"))
+                                txtEmptyHires.setText("تبلیغی یافت نشد");
+                            else
+                                txtEmptyHires.setText("Empty Hire Advertisements!");
+                            txtEmptyHires.setVisibility(View.VISIBLE);
+                        }
+                        else{
+
+                            if(data.length()>0){
+                                txtEmptyHires.setVisibility(View.GONE);
+                                for(int i = 0; i < data.length()-1; i++) {
+                                    JSONObject c = data.getJSONObject(i+"");
+                                    //Log.d("TAG", c.toString());
+                                    HireCompanies a = new HireCompanies(c.getInt("id"),c.getString("image"),c.getString("job_title"),c.getString("brand_name"),c.getString("job_title"),c.getString("province")
+                                            ,c.getString("job_description"));
+                                    companyList.add(a);
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                            else{
+                                if(Language.equals("fa"))
+                                    txtEmptyHires.setText("لیست تبلیغ\u200Cها خالی است!\"");
+                                else
+                                    txtEmptyHires.setText("Empty Hire Advertisements!");
+                                txtEmptyHires.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                        //Log.d("req_hires", "No Object recieved!");
+                        hideDialog();
+                    } catch (JSONException e) {
+                        // JSON error
+                        Log.d("req_hires", "error 1 " + e.getMessage());
+                        //e.printStackTrace();
+                        if(Language.equals("fa")){
+                            txtEmptyHires.setText("لیست تبلیغ\u200Cها خالی است");
+                            Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
+                        }
+
+                        else{
+                            txtEmptyHires.setText("Empty Hire Advertisements!");
+                            Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
+                        }
+                        txtEmptyHires.setVisibility(View.VISIBLE);
+                        hideDialog();
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("req_hires",  "error2"+" "+ error.getMessage());
                     if(Language.equals("fa")){
                         txtEmptyHires.setText("لیست تبلیغ\u200Cها خالی است");
                         Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
@@ -226,48 +329,40 @@ public class HireFragment extends Fragment {
                         Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
                     }
                     txtEmptyHires.setVisibility(View.VISIBLE);
-
                     hideDialog();
                 }
+            }) {
 
-            }
-        }, new Response.ErrorListener() {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("TAG",  "error2");
-                if(Language.equals("fa")){
-                    txtEmptyHires.setText("لیست تبلیغ\u200Cها خالی است");
-                    Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
+
+                    params.put("provinces", provinces);
+                    params.put("corporations", contracts);
+                    params.put("categories", jobcats);
+
+                    return params;
                 }
 
-                else{
-                    txtEmptyHires.setText("Empty Hire Advertisements!");
-                    Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
+
+                //basic auth
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String,String> headers = new HashMap<String, String>();
+                    // add headers <key,value>
+                    String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
+                    String auth = "Basic "
+                            + Base64.encodeToString(credentials.getBytes(),
+                            Base64.URL_SAFE|Base64.NO_WRAP);
+                    headers.put("Authorization", auth);
+                    return headers;
                 }
-                txtEmptyHires.setVisibility(View.VISIBLE);
-                hideDialog();
-            }
-        }) {
-            //basic auth
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> headers = new HashMap<String, String>();
-                // add headers <key,value>
-                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.URL_SAFE|Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
 
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-
+            };
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        }
     private void Province_Api(final String Language){
         String tag_string_req = "req_Province";
         StringRequest strReq = new StringRequest(Request.Method.GET,
@@ -275,8 +370,9 @@ public class HireFragment extends Fragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d("TAG", "Provinces Response: " + response.toString());
+                //Log.d("Navigations", "Provinces Response: " + response.toString());
                 try {
+
                     JSONObject jObj = new JSONObject(response);
                     JSONArray resarray = jObj.getJSONArray("data");
                     if(resarray.length()>0){
@@ -296,7 +392,7 @@ public class HireFragment extends Fragment {
 
                         CheckedNavigations = new boolean[ListNavigations.length];
                         setFilters(Language, "province", ListNavigations);
-                        Log.d("TAG", resarray.get(0).toString());
+                        //Log.d("Navigations", resarray.get(0).toString());
                     }
                     else{
                         hasnav=false;
@@ -306,12 +402,7 @@ public class HireFragment extends Fragment {
 
                 } catch (JSONException e) {
                     // JSON error
-                    Log.d("TAG", "error 1 ");
-                    if(Language.equals("fa"))
-                        Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-
+                    Log.d("Navigations", "error 1 ");
                 }
 
             }
@@ -319,12 +410,7 @@ public class HireFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("TAG",  "error2");
-                if(Language.equals("fa"))
-                    Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-
+                Log.e("Navigations",  "error2");
             }
         }) {
             //basic auth
@@ -344,7 +430,6 @@ public class HireFragment extends Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-
     private void Jobcat_Api(final String Language){
         String tag_string_req = "req_Province";
         StringRequest strReq = new StringRequest(Request.Method.GET,
@@ -352,7 +437,7 @@ public class HireFragment extends Fragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d("TAG", "Jobcats Response: " + response.toString());
+               // Log.d("JobCats", "Jobcats Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     JSONArray resarray = jObj.getJSONArray("data");
@@ -365,7 +450,7 @@ public class HireFragment extends Fragment {
                             }
                         CheckedJobcats = new boolean[ListNavigations.length];
                         setFilters(Language, "jobcats", ListNavigations);
-                        Log.d("TAG", resarray.get(0).toString());
+                        //Log.d("JobCats", resarray.get(0).toString());
                     }
                     else {
                         hasjobcat=false;
@@ -375,12 +460,7 @@ public class HireFragment extends Fragment {
 
                 } catch (JSONException e) {
                     // JSON error
-                    Log.d("TAG", "error 1 ");
-                    if(Language.equals("fa"))
-                        Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-
+                    Log.d("JobCats", "error 1 ");
                 }
 
             }
@@ -388,12 +468,7 @@ public class HireFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("TAG",  "error2");
-                if(Language.equals("fa"))
-                    Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده، دوباره امتحان کنید", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, "Network Connection or Server failed, try again later!", Toast.LENGTH_SHORT).show();
-
+                Log.e("JobCats",  "error2");
             }
         }) {
             //basic auth
@@ -413,7 +488,6 @@ public class HireFragment extends Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
-
     private void Intouch_Api(final String Language){
         String tag_string_req = "req_Province";
         StringRequest strReq = new StringRequest(Request.Method.GET,
@@ -421,7 +495,7 @@ public class HireFragment extends Fragment {
 
             @Override
             public void onResponse(String response) {
-                Log.d("TAG", "Intouchs Response: " + response.toString());
+                //Log.d("Corporations", "Intouchs Response: " + response.toString());
                 try {
                     JSONObject jObj = new JSONObject(response);
                     JSONArray resarray = jObj.getJSONArray("data");
@@ -442,7 +516,7 @@ public class HireFragment extends Fragment {
                         }
                         CheckedIntouchs = new boolean[ListNavigations.length];
                         setFilters(Language, "intouch", ListNavigations);
-                        Log.d("TAG", resarray.get(0).toString());
+                        //Log.d("Corporations", resarray.get(0).toString());
                     }
                     else{
                         hastouch=false;
@@ -451,13 +525,7 @@ public class HireFragment extends Fragment {
                     }
                 } catch (JSONException e) {
                     // JSON error
-                    Log.d("TAG", "error 1 " + e.getMessage());
-
-                    if(Language.equals("fa"))
-                        Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-                    //e.printStackTrace();
+                    Log.d("Corporations", "error 1 " + e.getMessage());
                 }
 
             }
@@ -466,11 +534,6 @@ public class HireFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("TAG",  "error2");
-                if(Language.equals("fa"))
-                    Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-
             }
         }) {
             //basic auth
@@ -487,8 +550,18 @@ public class HireFragment extends Fragment {
             }
 
         };
-        // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    private void reloadlist(){
+        companyList = new ArrayList<>();
+
+        adapter = new HireAdapter(getContext(), companyList, session);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+        startDialog();
     }
 
     //Hire Api , transactions
@@ -518,13 +591,17 @@ public class HireFragment extends Fragment {
                         mbuilderNav.setPositiveButton("اعمال کن", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                provinces="";
                                 String item = "";
                                 for (int p = 0; p < UserNavigations.size(); p++) {
                                     item = item + listfilter[1][UserNavigations.get(p)];
                                     if (p != UserNavigations.size() - 1)
                                         item = item + ",";
                                 }
-                                Log.d("FILTERS OF CITY", item);
+                                //Log.d("FILTERS OF CITY", item);
+                                provinces = item;
+                                reloadlist();
+                                fastList();
                             }
                         });
                         mbuilderNav.setNegativeButton("بستن", new DialogInterface.OnClickListener() {
@@ -541,6 +618,9 @@ public class HireFragment extends Fragment {
                                     CheckedNavigations[p] = false;
                                     UserNavigations.clear();
                                 }
+                                provinces="";
+                                reloadlist();
+                                fastList();
                             }
                         });
                     }
@@ -565,6 +645,7 @@ public class HireFragment extends Fragment {
                             mbuilderjobCat.setPositiveButton("اعمال کن", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    jobcats="";
                                     String item = "";
                                     for (int p = 0; p < UserJobcats.size(); p++) {
                                         item = item + listfilter[1][UserJobcats.get(p)];
@@ -572,6 +653,9 @@ public class HireFragment extends Fragment {
                                             item = item + ",";
                                     }
                                     Log.d("FILTERS OF JobCats", "onClick: " + item);
+                                    jobcats=item;
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                             mbuilderjobCat.setNegativeButton("بستن", new DialogInterface.OnClickListener() {
@@ -588,6 +672,9 @@ public class HireFragment extends Fragment {
                                         CheckedJobcats[p] = false;
                                         UserJobcats.clear();
                                     }
+                                    jobcats="";
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                         }
@@ -613,6 +700,7 @@ public class HireFragment extends Fragment {
                             mbuilderIntouchs.setPositiveButton("اعمال کن", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    contracts="";
                                     String item = "";
                                     for (int p = 0; p < UserIntouchs.size(); p++) {
                                         item = item + listfilter[1][UserIntouchs.get(p)];
@@ -620,6 +708,9 @@ public class HireFragment extends Fragment {
                                             item = item + ",";
                                     }
                                     Log.d("FILTERS OF JobCats", "onClick: " + item);
+                                    contracts=item;
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                             mbuilderIntouchs.setNegativeButton("بستن", new DialogInterface.OnClickListener() {
@@ -636,6 +727,9 @@ public class HireFragment extends Fragment {
                                         CheckedIntouchs[p] = false;
                                         UserIntouchs.clear();
                                     }
+                                    contracts="";
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                         }
@@ -664,12 +758,16 @@ public class HireFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     String item = "";
+                                    provinces="";
                                     for (int p = 0; p < UserNavigations.size(); p++) {
                                         item = item + listfilter[1][UserNavigations.get(p)];
                                         if (p != UserNavigations.size() - 1)
                                             item = item + ",";
                                     }
                                     Log.d("FILTERS OF CITY", "onClick: " + item);
+                                    provinces=item;
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                             mbuilderNav.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -686,6 +784,9 @@ public class HireFragment extends Fragment {
                                         CheckedNavigations[p] = false;
                                         UserNavigations.clear();
                                     }
+                                    provinces="";
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                         }
@@ -710,6 +811,7 @@ public class HireFragment extends Fragment {
                             mbuilderjobCat.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    jobcats="";
                                     String item = "";
                                     for (int p = 0; p < UserJobcats.size(); p++) {
                                         item = item + listfilter[1][UserJobcats.get(p)];
@@ -717,6 +819,9 @@ public class HireFragment extends Fragment {
                                             item = item + ",";
                                     }
                                     Log.d("FILTERS OF JobCats", "onClick: " + item);
+                                    jobcats=item;
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                             mbuilderjobCat.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -733,6 +838,9 @@ public class HireFragment extends Fragment {
                                         CheckedJobcats[p] = false;
                                         UserJobcats.clear();
                                     }
+                                    jobcats="";
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                         }
@@ -757,6 +865,7 @@ public class HireFragment extends Fragment {
                             mbuilderIntouchs.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    contracts="";
                                     String item = "";
                                     for (int p = 0; p < UserIntouchs.size(); p++) {
                                         item = item + listfilter[1][UserIntouchs.get(p)];
@@ -764,6 +873,9 @@ public class HireFragment extends Fragment {
                                             item = item + ",";
                                     }
                                     Log.d("FILTERS OF Intouchs", "onClick: " + item);
+                                    contracts=item;
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                             mbuilderIntouchs.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -780,16 +892,18 @@ public class HireFragment extends Fragment {
                                         CheckedIntouchs[p] = false;
                                         UserIntouchs.clear();
                                     }
+                                    contracts="";
+                                    reloadlist();
+                                    fastList();
                                 }
                             });
                         }
             }
         }
     }
-
     //Progress Dialog
     private void startDialog(){
-        pDialog.setCancelable(false);
+        pDialog.setCancelable(true);
         if(Language.equals("fa"))
             pDialog.setMessage("گرفتن لیست آگهی\u200Cهای استخدام...");
         else
@@ -797,17 +911,14 @@ public class HireFragment extends Fragment {
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         showDialog();
     }
-
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
     }
-
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
-
     //Translation
     private String updateLanguage(){
         //Default language is fa
@@ -816,7 +927,6 @@ public class HireFragment extends Fragment {
             Paper.book().write("language", "fa");
         return language;
     }
-
     private void updateView(String language) {
         Context context = LocaleHelper.setLocale(getActivity(), language);
         Resources resources = context.getResources();

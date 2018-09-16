@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.mrehya.Helper.LocaleHelper;
@@ -30,7 +31,8 @@ import io.paperdb.Paper;
 import static android.view.View.LAYOUT_DIRECTION_LTR;
 
 public class MainActivity extends AppCompatActivity {
-    Context context;
+    private  Context context;
+    private String Language="fa";
 
     //new
     TextView mytext3;
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     MenuItem navigation_more;
 
     //new
+    int openingFragment=0;
+
+    private SessionManager session;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase, "fa"));
@@ -55,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = getApplicationContext();
+
+        session = new SessionManager(getApplicationContext());
+        Intent intent = getIntent();
+        Language = intent.getStringExtra("Language");
 
         //new
         bnve = (BottomNavigationViewEx) findViewById(R.id.bnve);
@@ -69,9 +78,21 @@ public class MainActivity extends AppCompatActivity {
         setBnveSize(bnve,bnveFrame,dashIcon);
         bnve.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fab.bringToFront();
-        Fragment fragment = new DashboardFragment();
-        loadFragment(fragment);
-        bnve.setCurrentItem(2);
+
+        //DEFAULT FRAGMENT TO OPEN
+        if(getIntent().hasExtra("frgToLoad")){
+            if(openingFragment==0){
+                bnve.setCurrentItem(4);
+                Fragment fragment = new MoreFragment();
+                loadFragment(fragment);
+            }
+        }
+        else{
+            Fragment fragment = new DashboardFragment();
+            loadFragment(fragment);
+            bnve.setCurrentItem(2);
+        }
+
 
         //new
         //translating...
@@ -157,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment fragment;
@@ -175,9 +195,19 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(fragment);
                     return true;
                 case R.id.navigation_profile:
-                    fragment = new ProfileFragment();
-                    loadFragment(fragment);
-                    return true;
+                    if(session.isLoggedIn()){
+                        fragment = new ProfileFragment();
+                        loadFragment(fragment);
+                        return true;
+                    }
+                    else{
+                        if(Language.equals("fa"))
+                            Toast.makeText(context, "شما باید لاگین کنید", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(context, "You must login", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this, Login.class);
+                        startActivity(intent);
+                    }
                 case R.id.navigation_more:
                     fragment = new MoreFragment();
                     loadFragment(fragment);
@@ -197,6 +227,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    private void open_thatFragment(){
+            Fragment fragment;
+            switch (openingFragment) {
+                case 0:
+                    fragment = new HireFragment();
+                    loadFragment(fragment);
+                case 1:
+                    fragment = new NuroFragment();
+                    loadFragment(fragment);
+                case 2:
+                    fragment = new DashboardFragment();
+                    loadFragment(fragment);
+                case 3:
+                    fragment = new ProfileFragment();
+                    loadFragment(fragment);
+                case 4:
+                    fragment = new MoreFragment();
+                    loadFragment(fragment);
+        }
     }
 }
 

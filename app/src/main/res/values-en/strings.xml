@@ -58,18 +58,18 @@
 
 
     <!--Make Resume-->
-    <string name="JobTitle2">job title: </string>
-    <string name="LastDegreeTitle">Educational certificate: </string>
+    <string name="JobTitle2">job title </string>
+    <string name="LastDegreeTitle">Educational certificate</string>
     <string name="Edit">Edit</string>
     <string name="PrivateInfo">Private Info</string>
-    <string name="EmailAddressTitle">Email Address:  </string>
-    <string name="PhoneTitle">Phone:  </string>
-    <string name="ProvinceResumeTitle">Location(Province): </string>
-    <string name="MarriageResumeTitle">marital status:  </string>
-    <string name="GenderResumeTitle">Gender:  </string>
-    <string name="BirthYearResumeTitle">Year of Birth:  </string>
-    <string name="DutyResumeTitle">Military service status: </string>
-    <string name="AddressResumeTitle">Address:  </string>
+    <string name="EmailAddressTitle">Email Address </string>
+    <string name="PhoneTitle">Phone</string>
+    <string name="ProvinceResumeTitle">Location(Province) </string>
+    <string name="MarriageResumeTitle">marital status  </string>
+    <string name="GenderResumeTitle">Gender </string>
+    <string name="BirthYearResumeTitle">Year of Birth </string>
+    <string name="DutyResumeTitle">Military service status </string>
+    <string name="AddressResumeTitle">Address  </string>
     <string name="Talents">Professional skills </string>
     <string name="JobExp">work experience</string>
     <string name="GraduateExp">Educational records</string>
@@ -123,6 +123,9 @@
     <string name="LoginPage">Login Page</string>
     <string name="PasswordAgain">Confirm Password</string>
 
+    <string name="title_activity_resume_build">ResumeBuildActivity</string>
+    <string name="title_resumemain_list">ResumeCols</string>
+    <string name="title_resumemain_detail">ResumeMain Detail</string>
 
 
     <string name="app_name">Mrehya</string>
@@ -177,8 +180,8 @@
 
     <string-array name="langs">
         <item>English</item>
-        <item>Arabic</item>
         <item>Persian</item>
+        <item>Arabic</item>
     </string-array>
 
     <string name="LastDegree">Last degree</string>
@@ -216,9 +219,10 @@
          <item> Yazd </item>
     </string-array>
     <string-array name="Terms">
-        <item> Full-time </item>
-                 <item> Part-Time </item>
-                 <item> Telework </item>
+        <item>Full-time</item>
+         <item>Part-Time</item>
+         <item>Telework</item>
+        <item>internship</item>
     </string-array>
 
 
@@ -254,9 +258,9 @@
         <item>سرویس رفت و‌آمد</item>
     </string-array>
     <!--SHOW hire-->
-    <string name="JobTitleShowhire">Job title: </string>
-    <string name="JobTimeShowhire">Cooperation type: </string>
-    <string name="JobPlaceShowhire">Province: </string>
+    <string name="JobTitleShowhire">Job title </string>
+    <string name="JobTimeShowhire">Cooperation type </string>
+    <string name="JobPlaceShowhire">Province</string>
     <string name="Close">Dissmiss</string>
     <string name="Send_Resume">Send Resume</string>
 
@@ -303,7 +307,7 @@
         <item>Included</item>
     </string-array>
 
-    <string name="SlugTitle">Slug</string>
+    <string name="SlugTitle">Exclusive Link to resume:</string>
     <string name="post">Post:</string>
     <string name="Company">Company:</string>
     <string name="From">From:</string>
@@ -312,16 +316,16 @@
     <string name="educationplace">Education Place:</string>
 
     <string name="PIEditPersonalInfo">Edit Personal Information</string>
-    <string name="PIEmailAddress">Email Address</string>
-    <string name="PIMobile">Mobile</string>
-    <string name="PIProvince">Province</string>
-    <string name="PIBirthYear">Birth Year</string>
-    <string name="PIAddress">Address</string>
-    <string name="PIMarital">Marital</string>
-    <string name="PIGender">Gender</string>
-    <string name="PIMilitaryservice">Militaryservice</string>
+    <string name="PIEmailAddress">Email Address:</string>
+    <string name="PIMobile">Mobile:</string>
+    <string name="PIProvince">Province:</string>
+    <string name="PIBirthYear">Birth Year:</string>
+    <string name="PIAddress">Address:</string>
+    <string name="PIMarital">Marital:</string>
+    <string name="PIGender">Gender:</string>
+    <string name="PIMilitaryservice">Militaryservice:</string>
 
-    <string name="SaveChanges">Make Changes</string>
+    <string name="SaveChanges">Save Changes</string>
     <string name="SaveChanges2">Save Changes</string>
     <string name="DesiredIncometext">Salary list</string>
     <string-array name="DesiredIncome_arrays">
@@ -332,7 +336,7 @@
         <item>More than 5 million USD</item>
     </string-array>
 
-
+    <string name="ReserveRequestStatus">Time booked </string>
     <string name="Senority">Senior level</string>
     <string-array name="Senority_arrays">
         <item>beginner</item>
@@ -340,7 +344,7 @@
         <item>manager</item>
         <item>Senior</item>
     </string-array>
-
+    <string name="Educationgrade"> Education Grade:</string>
 
     <string name="contract">Type of work contract</string>
     <string-array name="contract_arrays">
@@ -357,4 +361,8 @@
     <string name="examstart">Start Exam</string>
     <string name="Next">Next</string>
     <string name="Back">Back</string>
+
+    <string name="reserve_req">Request Type</string>
+    <string name="desc">Description</string>
+
 </resources>

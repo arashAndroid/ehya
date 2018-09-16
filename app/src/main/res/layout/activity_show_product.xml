@@ -27,7 +27,7 @@
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/btnToCart"
-            android:textSize="@dimen/textSize1"
+            android:textSize="15dp"
             android:textColor="@color/textColorWhite"
             android:text="سبد خرید"
             android:drawableRight="@drawable/ic_cart"
@@ -39,7 +39,7 @@
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mrehya.ShowProduct">
+    tools:context="com.mrehya.Shopping.ShowProduct">
 
     <LinearLayout
         android:orientation="vertical"
@@ -134,7 +134,7 @@
                 </LinearLayout>
                 <LinearLayout
                     android:layout_marginTop="10dp"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -183,7 +183,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:text="توضیحات"
-                android:textSize="@dimen/textSize1"
+                android:textSize="15dp"
                 android:textColor="@color/textColorBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

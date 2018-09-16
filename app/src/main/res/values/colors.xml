@@ -47,4 +47,8 @@
     <color name="viewBg">#f1f5f8</color>
     <color name="album_title">#4c4c4c</color>
 
+    <color name="my_green">#05a702</color>
+    <color name="my_orange">#c95e00</color>
+    <color name="my_grey1">#febfc6bf</color>
+    <color name="my_blue1">#fe4765d1</color>
 </resources>

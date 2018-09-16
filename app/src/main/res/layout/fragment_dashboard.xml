@@ -46,14 +46,6 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:gravity="top|right"
-                    android:id="@+id/txtQnums1"
-                    android:text="32 سوال"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.0"
-                    android:textSize="10dp"/>
                 <ImageView
                     android:id="@+id/imgViewE1"
                     android:src="@drawable/ic_checkmark"
@@ -67,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.4"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textColor="@color/textColorBlack"/>
@@ -88,14 +80,6 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:gravity="top|right"
-                    android:id="@+id/txtQnums2"
-                    android:text="32 سوال"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.0"
-                    android:textSize="10dp"/>
                 <ImageView
                     android:id="@+id/imgViewE2"
                     android:src="@drawable/ic_checkmark"
@@ -109,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.4"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textColor="@color/textColorBlack"/>
@@ -128,14 +112,6 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:gravity="top|right"
-                    android:id="@+id/txtQnums3"
-                    android:text="32 سوال"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.0"
-                    android:textSize="10dp"/>
                 <ImageView
                     android:id="@+id/imgViewE3"
                     android:src="@drawable/ic_checkmark"
@@ -149,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.4"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textColor="@color/textColorBlack"/>
@@ -186,14 +162,6 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:gravity="top|right"
-                    android:id="@+id/txtQnums4"
-                    android:text="32 سوال"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.0"
-                    android:textSize="10dp" />
                 <ImageView
                     android:id="@+id/imgViewE4"
                     android:src="@drawable/ic_checkmark"
@@ -207,7 +175,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.4"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textColor="@color/textColorBlack"/>
@@ -227,14 +195,6 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:gravity="top|right"
-                    android:id="@+id/txtQnums5"
-                    android:text="32 سوال"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.0"
-                    android:textSize="10dp" />
                 <ImageView
                     android:id="@+id/imgViewE5"
                     android:src="@drawable/ic_checkmark"
@@ -248,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="0.4"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:textColor="@color/textColorBlack"/>
@@ -267,14 +227,6 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:gravity="top|right"
-                    android:id="@+id/txtQnums6"
-                    android:text="32 سوال"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.0"
-                    android:textSize="10dp" />
                 <ImageView
                     android:id="@+id/imgViewE6"
                     android:src="@drawable/ic_checkmark"
@@ -291,7 +243,7 @@
                     android:gravity="center"
                     android:layout_gravity="center"
                     android:layout_weight="0.4"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:textColor="@color/textColorBlack"/>
             </LinearLayout>
         </RelativeLayout>

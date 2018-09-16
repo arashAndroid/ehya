@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.mrehya.Hire.HireCompanies;
 
 import java.util.List;
 

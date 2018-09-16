@@ -82,29 +82,33 @@
             android:textSize="@dimen/textSize1"
             android:id="@+id/txteducationgrade"
             android:layout_gravity="center"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="10dp"
+            android:padding="5dp"
             android:text="مقطع تحصیلی: "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <Spinner
             android:id="@+id/spinnerGradeEducation"
             android:layout_gravity="center"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:paddingRight="10dp"
+            android:padding="15dp"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-
     </LinearLayout>
+    <LinearLayout
+        android:gravity="center"
+        android:id="@+id/LinearLayoutresumedialogEdu7"
+        android:layout_marginRight="10dp"
+        android:layoutDirection="rtl"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:gravity="center"
         android:id="@+id/LinearLayoutresumedialogEdu3"
         android:layout_marginRight="10dp"
         android:layoutDirection="rtl"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -122,8 +126,18 @@
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="center"
+        android:id="@+id/LinearLayoutresumedialogEdu6"
+        android:layout_marginRight="10dp"
+        android:layoutDirection="rtl"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/txtunitl"
+            android:id="@+id/txtuntil2"
             android:text="تا: "
             android:textSize="@dimen/textSize1"
             android:layout_width="wrap_content"
@@ -136,7 +150,7 @@
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
+        </LinearLayout>
     </LinearLayout>
     <ImageButton
         android:layout_marginTop="10dp"

@@ -3,11 +3,19 @@ package com.mrehya;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
@@ -18,10 +26,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,50 +37,65 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.mrehya.Helper.LocaleHelper;
+import com.mrehya.Hire.ShowHireStatus;
+import com.mrehya.Shopping.ShowPurchase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.paperdb.Paper;
 
+import static android.app.Activity.RESULT_OK;
+import static android.support.v4.content.ContextCompat.checkSelfPermission;
+
+import android.Manifest;
 
 public class ProfileFragment extends Fragment {
 
-    SessionManager sessionManager;
-    Button btnSignInOrUp,showPurchases,hireRequestStatus,btnEditProfile,BtnInstagram,btnTelegram;
-    AlertDialog ad ;
-    //new
-    MyTextView profileType,mytextUserInfo,mytextUserInfo2;
-    LinearLayout LinearLayoutprofile1,LinearLayoutprofile2,LinearLayoutprofile3,LinearLayoutprofile4
-            ,LinearLayoutprofile5,LinearLayoutprofile6;
+    private SessionManager sessionManager;
+    private Context context;
+    private ProgressDialog pDialog, pDialog_updateuserinfo;
+    private String Language, newtoken="empty";
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    //ELEMENTS
+    private Button btnSignInOrUp, showPurchases, hireRequestStatus, btnEditProfile,
+             BtnInstagram ,btnTelegram, ReserveRequestStatus, btn_save_editprof;
+    private AlertDialog ad ;
+    private MyTextView profileType, mytextUserInfo, mytextUserInfo2, profname;
+    private LinearLayout LinearLayoutprofile1,LinearLayoutprofile2,LinearLayoutprofile3,LinearLayoutprofile4
+            ,LinearLayoutprofile5,LinearLayoutprofile6, LinearLayoutprofileReserve;
+    private TextView txtEditName,txtEditLastName,txtEditEmail,txtEditMobile,txtEditPhone,txtEditZip,txtEditAddress;
+    private TextView txtEditProfile,txtName,txtLastname,txtEmail,txtPhoneNumber,txtTelephone,txtPostcode,txtAddress;
+    private ImageView imageViewProfile;
 
-    MyTextView profname;
-    TextView txtEditName,txtEditLastName,txtEditEmail,txtEditMobile,txtEditPhone,txtEditZip,txtEditAddress;
-    TextView txtEditProfile,txtName,txtLastname,txtEmail,txtPhoneNumber,txtTelephone,txtPostcode,txtAddress;
 
-    Button btn_save_editprof;
-    Context context;
-    private ProgressDialog pDialog;
-    private ProgressDialog pDialog_updateuserinfo;
-    String Language, newtoken="empty";
-    private SessionManager session;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        return findViews(inflater, container);
+    }
+    private View findViews(final LayoutInflater inflater, ViewGroup container){
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_profile, container, false);
         btnSignInOrUp = view.findViewById(R.id.btnSignInOrUp);
         showPurchases = view.findViewById(R.id.showPurchases);
         hireRequestStatus = view.findViewById(R.id.hireRequestStatus);
-        hireRequestStatus.setVisibility(View.GONE);
+        ReserveRequestStatus = view.findViewById(R.id.ReserveRequestStatus);
+
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         context =view.getContext();
         pDialog = new ProgressDialog(context);
-        session = new SessionManager(context);
+        sessionManager = new SessionManager(context);
         //new
         profileType = view.findViewById(R.id.profileType);
         mytextUserInfo = view.findViewById(R.id.mytextUserInfo);
@@ -86,27 +107,134 @@ public class ProfileFragment extends Fragment {
         LinearLayoutprofile4 = (LinearLayout) view.findViewById(R.id.LinearLayoutprofile4);
         LinearLayoutprofile5 = (LinearLayout) view.findViewById(R.id.LinearLayoutprofile5);
         LinearLayoutprofile6 = (LinearLayout) view.findViewById(R.id.LinearLayoutprofile6);
-
+        LinearLayoutprofileReserve = (LinearLayout) view.findViewById(R.id.LinearLayoutprofileReserve);
+        imageViewProfile = (ImageView) view.findViewById(R.id.profileImage);
         btnTelegram = view.findViewById(R.id.btnTelegram);
         BtnInstagram = view.findViewById(R.id.BtnInstagram);
-
         profname = view.findViewById(R.id.profileName);
-        profname.setText(session.getUserDetails().getFirstname());
+
+        setViews();
+        loadImageFromStorage("/data/user/0/com.mrehya/app_EHYA");
+        setOnclicks();
+        return view;
+    }
+    private void setViews(){
+        //Remaining apis
+        LinearLayoutprofile4.setVisibility(View.GONE);
+        LinearLayoutprofileReserve.setVisibility(View.GONE);
+        LinearLayoutprofile3.setVisibility(View.GONE);
+
+        profname.setText(sessionManager.getUserDetails().getFirstname() + " " + sessionManager.getUserDetails().getLastname());
         Language = updateLanguage();
         updateView((String) Paper.book().read("language"));
+    }
+    private void setOnclicks(){
 
-        sessionManager = new SessionManager(getContext());
+        //choose image dialog
+        imageViewProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isReadStoragePermissionGranted() && isWriteStoragePermissionGranted()) {
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.setContentView(R.layout.dialog_profile_image);
+
+                    final TextView title = (TextView) dialog.findViewById(R.id.txtImagedialog);
+                    final Button btn_gallery = (Button) dialog.findViewById(R.id.btn_gallery);
+                    final Button btn_take = (Button) dialog.findViewById(R.id.btn_take);
+                    final Button btn_remove = (Button) dialog.findViewById(R.id.btn_remove);
+                    final Button btn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                    if (Language.equals("fa")) {
+                        title.setText("تصویر پروفایل");
+                        btn_gallery.setText("انتخاب از گالری");
+                        btn_take.setText("گرفتن عکس");
+                        btn_remove.setText("حذف");
+                        btn_cancel.setText("انصراف");
+                    } else {
+                        title.setText("Profile picture");
+                        btn_gallery.setText("Choose from gallery");
+                        btn_take.setText("Take new one");
+                        btn_remove.setText("Remove");
+                        btn_cancel.setText("Cancel");
+                    }
+
+                    btn_gallery.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(
+                                    Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(i, 1);
+                        }
+                    });
+                    ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+                    File directory = cw.getDir("EHYA", Context.MODE_PRIVATE);
+                    loadImageFromStorage(directory.getPath());
+
+                    Log.e("path: ",directory.getPath());
+
+
+                    btn_take.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            if (checkSelfPermission(context, Manifest.permission.CAMERA)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                        MY_CAMERA_PERMISSION_CODE);
+                            } else {
+                                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                            }
+                        }
+                    });
+
+                    btn_cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    btn_remove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            imageViewProfile.setImageDrawable(getResources().getDrawable(R.drawable.profile_thumb));
+                            File myFile = new File("/data/user/0/com.mrehya/app_EHYA/profile.jpg");
+                            if(myFile.exists())
+                                myFile.delete();
+                        }
+                    });
+
+                    DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
+                    int width = metrics.widthPixels;
+                    dialog.setCancelable(true);
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.show();
+                    dialog.getWindow().setLayout((12 * width) / 13, ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
+            }
+        });
+
+        btnTelegram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = "https://t.me/memoryinstitute";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
+            }
+        });
         btnSignInOrUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (session.isLoggedIn()){
+                if (sessionManager.isLoggedIn()){
                     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                     alertDialogBuilder.setMessage("آیا واقعا میخواهید خارج شوید؟");
 
                     alertDialogBuilder.setPositiveButton("بله", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            session.setLogin(false);
+                            sessionManager.setLogin(false);
                             Intent intent = new Intent(getActivity() , Language.class);
                             startActivity(intent);
                             getActivity().finish();
@@ -128,6 +256,18 @@ public class ProfileFragment extends Fragment {
             }
         });
         hireRequestStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sessionManager.isLoggedIn()) {
+                    Intent intent = new Intent(getActivity(), ShowHireStatus.class);
+                    startActivity(intent);
+                }else{
+                    Intent intent = new Intent(getActivity(), LoginOrSignup.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        ReserveRequestStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (sessionManager.isLoggedIn()) {
@@ -161,7 +301,7 @@ public class ProfileFragment extends Fragment {
                     pDialog_updateuserinfo = new ProgressDialog(getActivity());
                     startpDialog_updateuserinfo();
                     get_credentials(sessionManager.getUserDetails().getToken(),sessionManager.getUserDetails().getEmail()
-                            ,session.getUserDetails().getPassword(), null);
+                            ,sessionManager.getUserDetails().getPassword(), null);
                     //txts
                     txtEditProfile = dialog.findViewById(R.id.txtEditProfile);
                     txtName = dialog.findViewById(R.id.txtName);
@@ -205,7 +345,7 @@ public class ProfileFragment extends Fragment {
                         public void onClick(View view) {
                             pDialog = new ProgressDialog(getActivity());
                             startDialog();
-                            update_token(sessionManager.getUserDetails().getEmail(), session.getUserDetails().getPassword(), dialog);
+                            update_token(sessionManager.getUserDetails().getEmail(), sessionManager.getUserDetails().getPassword(), dialog);
                         }
                     });
                     dialog.setCancelable(true);
@@ -219,112 +359,10 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
-        return view;
     }
 
 
-    private String updateLanguage(){
-        //Default language is fa
-        String language = Paper.book().read("language");
-        if(language==null)
-            Paper.book().write("language", "fa");
-        return language;
-    }
-    private void updateView(String language) {
-        Context context = LocaleHelper.setLocale(getActivity(), language);
-        Resources resources = context.getResources();
-
-        //Linear Layouts
-        if(language.equals("fa")){
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
-                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                mytextUserInfo.setGravity(Gravity.RIGHT);
-                mytextUserInfo2.setGravity(Gravity.RIGHT);
-            }
-            else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                mytextUserInfo.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                mytextUserInfo2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-                mytextUserInfo.setGravity(Gravity.RIGHT);
-                mytextUserInfo2.setGravity(Gravity.RIGHT);
-
-            }
-
-            btnSignInOrUp.setGravity(Gravity.RIGHT|Gravity.CENTER);
-            showPurchases.setGravity(Gravity.RIGHT|Gravity.CENTER);
-            hireRequestStatus.setGravity(Gravity.RIGHT|Gravity.CENTER);
-            btnEditProfile.setGravity(Gravity.RIGHT|Gravity.CENTER);
-            BtnInstagram.setGravity(Gravity.RIGHT|Gravity.CENTER);
-            btnTelegram.setGravity(Gravity.RIGHT|Gravity.CENTER);
-        }
-        else {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
-                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                mytextUserInfo.setGravity(Gravity.LEFT);
-                mytextUserInfo2.setGravity(Gravity.LEFT);
-            }
-            else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
-                mytextUserInfo.setGravity(Gravity.LEFT);
-                mytextUserInfo2.setGravity(Gravity.LEFT);
-            }
-
-            btnSignInOrUp.setGravity(Gravity.LEFT|Gravity.CENTER);
-            showPurchases.setGravity(Gravity.LEFT|Gravity.CENTER);
-            hireRequestStatus.setGravity(Gravity.LEFT|Gravity.CENTER);
-            btnEditProfile.setGravity(Gravity.LEFT|Gravity.CENTER);
-            BtnInstagram.setGravity(Gravity.LEFT|Gravity.CENTER);
-            btnTelegram.setGravity(Gravity.LEFT|Gravity.CENTER);
-        }
-        btnSignInOrUp.setText(resources.getString(R.string.SignInOrUp));
-        if (session.isLoggedIn()){
-            btnSignInOrUp.setText(resources.getString(R.string.LogOut));
-        }
-        showPurchases.setText(resources.getString(R.string.showPurchases));
-        hireRequestStatus.setText(resources.getString(R.string.hireRequestStatus));
-        btnEditProfile.setText(resources.getString(R.string.EditProfile));
-        BtnInstagram.setText(resources.getString(R.string.Instagram));
-        btnTelegram.setText(resources.getString(R.string.Telegram));
-        profileType.setText(resources.getString(R.string.profileType));
-        mytextUserInfo.setText(resources.getString(R.string.UserInfo));
-        mytextUserInfo2.setText(resources.getString(R.string.UserInfo2));
-
-
-    }
-    public void updateView_dialog(String language){
-        Context context = LocaleHelper.setLocale(getActivity(), language);
-        Resources resources = context.getResources();
-        txtEditProfile.setText(resources.getString(R.string.EditProfile));
-        txtName.setText(resources.getString(R.string.Name));
-        txtLastname.setText(resources.getString(R.string.Lastname));
-        txtEmail.setText(resources.getString(R.string.Email));
-        txtPhoneNumber.setText(resources.getString(R.string.PhoneNumber));
-        txtTelephone.setText(resources.getString(R.string.Telephone));
-        txtPostcode.setText(resources.getString(R.string.Postcode));
-        txtAddress.setText(resources.getString(R.string.Address));
-    }
-
+    //methods
     private void update_token(final String email , final String password, final Dialog dialog){
 
         String tag_string_req = "req_login";
@@ -440,8 +478,8 @@ public class ProfileFragment extends Fragment {
                         address = c.getString("address");
                         zip = c.getString("postal_code");
                         password = passwordd;
-                        session.setLogin(true);
-                        session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,"0");
+                        sessionManager.setLogin(true);
+                        sessionManager.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,"0");
                         pDialog_updateuserinfo.setProgress(50);
                         if(dialog != null)
                             update_user(token, dialog);
@@ -517,11 +555,11 @@ public class ProfileFragment extends Fragment {
                         // user successfully logged in
                         JSONObject c = jObj.getJSONObject("data");
                         // some long running task will run here. We are using sleep as a dummy to delay execution
-                        session.setUserDetails(c.getInt("id"),
+                        sessionManager.setUserDetails(c.getInt("id"),
                                 c.getString("first_name"), c.getString("last_name"),
                                 c.getString("email"),c.getString("tel_number"),
-                                newtoken, session.getUserDetails().getImage(),c.getString("mobile"),
-                                c.getString("address"),c.getString("postal_code"), session.getUserDetails().getPassword(),"0");
+                                newtoken, sessionManager.getUserDetails().getImage(),c.getString("mobile"),
+                                c.getString("address"),c.getString("postal_code"), sessionManager.getUserDetails().getPassword(),"0");
 
                         if(dialog.isShowing())
                             dialog.dismiss();
@@ -617,6 +655,332 @@ public class ProfileFragment extends Fragment {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
+    //IMAGE Gallery
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null){
+            Uri selectedImage = data.getData();
+            try {
+                Bitmap bitmapImage = MediaStore.Images.Media.getBitmap(context.getContentResolver(), selectedImage);
+                saveToInternalStorage(bitmapImage);
+                imageViewProfile.setImageBitmap(bitmapImage);
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+    private void loadImageFromStorage(String path) {
+
+        try {
+            File f=new File(path, "profile.jpg");
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+            imageViewProfile.setImageBitmap(b);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+    private String saveToInternalStorage(Bitmap bitmapImage){
+        ContextWrapper cw = new ContextWrapper(getActivity());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("EHYA", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,"profile.jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return directory.getAbsolutePath();
+    }
+    private void getContentResolver() {
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Image TAKE
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, "camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new
+                        Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            } else {
+                Toast.makeText(context, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+
+        }else if (requestCode == 2){
+            if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.dialog_profile_image);
+
+                final TextView title = (TextView) dialog.findViewById(R.id.txtImagedialog);
+                final Button btn_gallery = (Button) dialog.findViewById(R.id.btn_gallery);
+                final Button btn_take = (Button) dialog.findViewById(R.id.btn_take);
+                final Button btn_remove = (Button) dialog.findViewById(R.id.btn_remove);
+                final Button btn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                if (Language.equals("fa")) {
+                    title.setText("تصویر پروفایل");
+                    btn_gallery.setText("انتخاب از گالری");
+                    btn_take.setText("گرفتن عکس");
+                    btn_remove.setText("حذف");
+                    btn_cancel.setText("انصراف");
+                } else {
+                    title.setText("Profile picture");
+                    btn_gallery.setText("Choose from gallery");
+                    btn_take.setText("Take new one");
+                    btn_remove.setText("Remove");
+                    btn_cancel.setText("Cancel");
+                }
+
+                btn_gallery.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(
+                                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, 1);
+                    }
+                });
+                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+                File directory = cw.getDir("EHYA", Context.MODE_PRIVATE);
+                loadImageFromStorage(directory.getPath());
+
+
+                btn_take.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        if (checkSelfPermission(context, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                    MY_CAMERA_PERMISSION_CODE);
+                        } else {
+                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                        }
+                    }
+                });
+
+                btn_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
+                int width = metrics.widthPixels;
+                dialog.setCancelable(true);
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+                dialog.getWindow().setLayout((12 * width) / 13, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            }else{
+                Toast.makeText(getContext(),"اجازه دسترسی به فظای دیسک داده نشده است!",Toast.LENGTH_SHORT).show();
+            }
+        }else if(requestCode ==3){
+            if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                final Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.dialog_profile_image);
+
+                final TextView title = (TextView) dialog.findViewById(R.id.txtImagedialog);
+                final Button btn_gallery = (Button) dialog.findViewById(R.id.btn_gallery);
+                final Button btn_take = (Button) dialog.findViewById(R.id.btn_take);
+                final Button btn_remove = (Button) dialog.findViewById(R.id.btn_remove);
+                final Button btn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+
+                if (Language.equals("fa")) {
+                    title.setText("تصویر پروفایل");
+                    btn_gallery.setText("انتخاب از گالری");
+                    btn_take.setText("گرفتن عکس");
+                    btn_remove.setText("حذف");
+                    btn_cancel.setText("انصراف");
+                } else {
+                    title.setText("Profile picture");
+                    btn_gallery.setText("Choose from gallery");
+                    btn_take.setText("Take new one");
+                    btn_remove.setText("Remove");
+                    btn_cancel.setText("Cancel");
+                }
+
+                btn_gallery.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(
+                                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(i, 1);
+                    }
+                });
+                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+                File directory = cw.getDir("EHYA", Context.MODE_PRIVATE);
+                loadImageFromStorage(directory.getPath());
+
+
+                btn_take.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        if (checkSelfPermission(context, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                    MY_CAMERA_PERMISSION_CODE);
+                        } else {
+                            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                        }
+                    }
+                });
+
+                btn_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+
+                DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
+                int width = metrics.widthPixels;
+                dialog.setCancelable(true);
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+                dialog.getWindow().setLayout((12 * width) / 13, ViewGroup.LayoutParams.WRAP_CONTENT);
+            }else{
+                Toast.makeText(getContext(),"اجازه دسترسی به فظای دیسک داده نشده است!",Toast.LENGTH_SHORT).show();            }
+        }
+    }
+//    void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+//            Bitmap photo = (Bitmap) data.getExtras().get("data");
+//            imageViewProfile.setImageBitmap(photo);
+//        }
+//    }
+
+    //usual methods
+    private String updateLanguage(){
+        //Default language is fa
+        String language = Paper.book().read("language");
+        if(language==null)
+            Paper.book().write("language", "fa");
+        return language;
+    }
+    private void updateView(String language) {
+        Context context = LocaleHelper.setLocale(getActivity(), language);
+        Resources resources = context.getResources();
+
+        //Linear Layouts
+        if(language.equals("fa")){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofileReserve.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                mytextUserInfo.setGravity(Gravity.RIGHT);
+                mytextUserInfo2.setGravity(Gravity.RIGHT);
+            }
+            else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutprofileReserve.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                mytextUserInfo.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                mytextUserInfo2.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                mytextUserInfo.setGravity(Gravity.RIGHT);
+                mytextUserInfo2.setGravity(Gravity.RIGHT);
+
+            }
+
+            btnSignInOrUp.setGravity(Gravity.RIGHT|Gravity.CENTER);
+            showPurchases.setGravity(Gravity.RIGHT|Gravity.CENTER);
+            hireRequestStatus.setGravity(Gravity.RIGHT|Gravity.CENTER);
+            ReserveRequestStatus.setGravity(Gravity.RIGHT|Gravity.CENTER);
+            btnEditProfile.setGravity(Gravity.RIGHT|Gravity.CENTER);
+            //BtnInstagram.setGravity(Gravity.RIGHT|Gravity.CENTER);
+            //btnTelegram.setGravity(Gravity.RIGHT|Gravity.CENTER);
+        }
+        else {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofileReserve.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                mytextUserInfo.setGravity(Gravity.LEFT);
+                mytextUserInfo2.setGravity(Gravity.LEFT);
+            }
+            else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                LinearLayoutprofile1.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile2.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile3.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile4.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile5.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofile6.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutprofileReserve.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                mytextUserInfo.setGravity(Gravity.LEFT);
+                mytextUserInfo2.setGravity(Gravity.LEFT);
+            }
+
+            btnSignInOrUp.setGravity(Gravity.LEFT|Gravity.CENTER);
+            showPurchases.setGravity(Gravity.LEFT|Gravity.CENTER);
+            hireRequestStatus.setGravity(Gravity.LEFT|Gravity.CENTER);
+            ReserveRequestStatus.setGravity(Gravity.LEFT|Gravity.CENTER);
+            btnEditProfile.setGravity(Gravity.LEFT|Gravity.CENTER);
+            //BtnInstagram.setGravity(Gravity.LEFT|Gravity.CENTER);
+            //btnTelegram.setGravity(Gravity.LEFT|Gravity.CENTER);
+        }
+        btnSignInOrUp.setText(resources.getString(R.string.SignInOrUp));
+        if (sessionManager.isLoggedIn()){
+            btnSignInOrUp.setText(resources.getString(R.string.LogOut));
+        }
+        showPurchases.setText(resources.getString(R.string.showPurchases));
+        hireRequestStatus.setText(resources.getString(R.string.hireRequestStatus));
+        ReserveRequestStatus.setText(resources.getString(R.string.ReserveRequestStatus));
+        btnEditProfile.setText(resources.getString(R.string.EditProfile));
+        BtnInstagram.setText(resources.getString(R.string.Instagram));
+        btnTelegram.setText(resources.getString(R.string.Telegram));
+        profileType.setText(resources.getString(R.string.profileType));
+        mytextUserInfo.setText(resources.getString(R.string.UserInfo));
+        mytextUserInfo2.setText(resources.getString(R.string.UserInfo2));
+
+
+    }
+    public void updateView_dialog(String language){
+        Context context = LocaleHelper.setLocale(getActivity(), language);
+        Resources resources = context.getResources();
+        txtEditProfile.setText(resources.getString(R.string.EditProfile));
+        txtName.setText(resources.getString(R.string.Name));
+        txtLastname.setText(resources.getString(R.string.Lastname));
+        txtEmail.setText(resources.getString(R.string.Email));
+        txtPhoneNumber.setText(resources.getString(R.string.PhoneNumber));
+        txtTelephone.setText(resources.getString(R.string.Telephone));
+        txtPostcode.setText(resources.getString(R.string.Postcode));
+        txtAddress.setText(resources.getString(R.string.Address));
+    }
 
     //Progress Dialog
     private void startDialog(){
@@ -636,8 +1000,6 @@ public class ProfileFragment extends Fragment {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
-
-
     private void startpDialog_updateuserinfo(){
         pDialog_updateuserinfo.setCancelable(true);
         if(Language.equals("fa"))
@@ -657,5 +1019,72 @@ public class ProfileFragment extends Fragment {
             pDialog_updateuserinfo.dismiss();
         }
     }
+
+
+    public  boolean isReadStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(getContext(),Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG","Permission is granted1");
+                return true;
+            } else {
+
+                Log.v("TAG","Permission is revoked1");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 3);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG","Permission is granted1");
+            return true;
+        }
+    }
+
+    public  boolean isWriteStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(getContext(),android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG","Permission is granted2");
+                return true;
+            } else {
+
+                Log.v("TAG","Permission is revoked2");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG","Permission is granted2");
+            return true;
+        }
+    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case 2:
+//                Log.d(TAG, "External storage2");
+//                if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+//                    Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
+//                    //resume tasks needing this permission
+//                    downloadPdfFile();
+//                }else{
+//                    progress.dismiss();
+//                }
+//                break;
+//
+//            case 3:
+//                Log.d(TAG, "External storage1");
+//                if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+//                    Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
+//                    //resume tasks needing this permission
+//                    SharePdfFile();
+//                }else{
+//                    progress.dismiss();
+//                }
+//                break;
+//        }
+//    }
 
 }

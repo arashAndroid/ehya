@@ -321,7 +321,7 @@ public class Login extends AppCompatActivity implements
                             resume =null;
                         password = passwordd;
                         session.setLogin(true);
-                        Log.d("TAG", "user logged");
+                        Log.e("TAG", "user logged");
                         session.setUserDetails(id,firstname,lastname,email,phone,token, image,mobile,address,zip,password,resume);
                         //hideDialog();
                     } else {

@@ -3,13 +3,16 @@ package com.mrehya;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -19,8 +22,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.mrehya.Helper.LocaleHelper;
+import com.mrehya.Reserv.PersianCalendar;
+import com.mrehya.Reserv.Persian_Date_Methods;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.paperdb.Paper;
 
@@ -33,7 +39,9 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
     private Context context;
     private Activity activity;
     private ListView listView;
-
+    private String language="fa";
+    ArrayList<String> years, month;
+    private Resources resources;
     //new
     private LinearLayout LinearLayoutitemjobs1;
     private TextView txtJobTitle;
@@ -71,15 +79,37 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.list_item_jobs, null);
         }
+        updateLanguage();
 
+        setLists();
+        LinearLayout LinearLayouttop=(LinearLayout)view.findViewById(R.id.LinearLayouttop);
+        LinearLayout LinearLayoutbot=(LinearLayout)view.findViewById(R.id.LinearLayoutbot);
+
+        resources = context.getResources();
+        if(language.equals("fa")){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                LinearLayouttop.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                LinearLayoutbot.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            }
+            LinearLayouttop.setGravity(Gravity.RIGHT);
+            LinearLayoutbot.setGravity(Gravity.RIGHT);
+        }
+        else{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                LinearLayouttop.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                LinearLayoutbot.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+            }
+            LinearLayouttop.setGravity(Gravity.LEFT);
+            LinearLayoutbot.setGravity(Gravity.LEFT);
+        }
         //Handle TextView and display string from your list
-        Job job = list.get(position);
+        final Job job = list.get(position);
         TextView txtJobTitle = (TextView)view.findViewById(R.id.txtJobTitle);
         TextView txtJobCompany = (TextView)view.findViewById(R.id.txtJobCompany);
         TextView txtJobFrom = (TextView)view.findViewById(R.id.txtJobFrom);
         TextView txtJobTo = (TextView)view.findViewById(R.id.txtJobTo);
 
-        txtJobTitle.setText(job.getRole());
+        txtJobTitle.setText(job.getJobtitle());
         txtJobCompany.setText(job.getCompany());
         txtJobFrom.setText(job.getFrom());
         txtJobTo.setText(job.getTo());
@@ -92,6 +122,7 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //do something
+
                 list.remove(position); //or some other task
                 notifyDataSetChanged();
                 justifyListViewHeightBasedOnChildren(listView);
@@ -102,7 +133,7 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 //do something
                 Job job2 = list.get(position);
-                showDialog(job2.getRole(),job2.getCompany(),job2.getFrom(),job2.getTo(),position);
+                showDialog(job2.getId() , job.getJobtitle() ,job2.getRole(),job2.getCompany(),job2.getFrom(),job2.getTo(),position);
                 notifyDataSetChanged();
             }
         });
@@ -113,17 +144,104 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
 
         return view;
     }
-    private void showDialog(String jobRole,String jobCompany,String jobFrom,String jobTo, final int index){
+    private void showDialog(final int id, String title, String jobRole, String jobCompany, String jobFrom, String jobTo, final int index){
         final Dialog dialog = new Dialog(activity);
         dialog.setContentView(R.layout.list_dialog_jobs);
-        final EditText txtEditRole = dialog.findViewById(R.id.txtEditDialogJobRole);
+        final EditText txtEditRole = dialog.findViewById(R.id.txtEditDialogJobDesc);
         final EditText txtEditCompany = dialog.findViewById(R.id.txtEditDialogJobCompany);
         final Spinner txtEditFrom = dialog.findViewById(R.id.spinnerFromJob);
         final Spinner txtEditTo = dialog.findViewById(R.id.spinnerToJob);
-        final EditText txtEditJobtitle = dialog.findViewById(R.id.txtEditDialogJobtitle);
+        final CheckBox chkStillWorking = dialog.findViewById(R.id.chkStillWorking);
 
-        txtEditRole.setText(jobRole);
+        final Spinner txtEditFrommonth = dialog.findViewById(R.id.spinnerFromJobmonth);
+        final Spinner txtEditTomonth = dialog.findViewById(R.id.spinnerToJobmonth);
+
+        final EditText txtEditJobtitle = dialog.findViewById(R.id.txtEditDialogJobtitle);
+        final TextView txtjobtitle= dialog.findViewById(R.id.txtjobtitle);
+        final TextView txtpost = dialog.findViewById(R.id.txtdesc);
+        final TextView txtcompany = dialog.findViewById(R.id.txtcompany);
+        final TextView txtFrom = dialog.findViewById(R.id.txtFrom);
+        final TextView txtuntil = dialog.findViewById(R.id.txtuntil);
+
+
+        txtEditFrommonth.setVisibility(View.GONE);
+        txtEditTomonth.setVisibility(View.GONE);
+        chkStillWorking.setVisibility(View.GONE);
+        txtpost.setVisibility(View.GONE);
+        txtEditRole.setVisibility(View.GONE);
+
         txtEditCompany.setText(jobCompany);
+        txtEditJobtitle.setText(title);
+        if(language.equals("fa")){
+            ArrayAdapter<String> From = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_rtl,
+                    years
+            );
+            From.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+            txtEditFrom.setAdapter(From);
+
+            ArrayAdapter<String> To = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_rtl,
+                    years
+            );
+            To.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+            txtEditTo.setAdapter(To);
+
+//            ArrayAdapter<String> Frommonth = new ArrayAdapter<String>(
+//                    context,
+//                    R.layout.z_simple_spinner_item_rtl,
+//                    month
+//            );
+//            From.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+//            txtEditFrommonth.setAdapter(Frommonth);
+//
+//            ArrayAdapter<String> Tomonth = new ArrayAdapter<String>(
+//                    context,
+//                    R.layout.z_simple_spinner_item_rtl,
+//                    month
+//            );
+//            To.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+//            txtEditTomonth.setAdapter(Tomonth);
+        }
+        else{
+            ArrayAdapter<String> From = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_ltr,
+                    years
+            );
+            From.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+            txtEditFrom.setAdapter(From);
+
+            ArrayAdapter<String> To = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_ltr,
+                    years
+            );
+            To.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+            txtEditTo.setAdapter(To);
+
+
+
+
+//            ArrayAdapter<String> Frommonth = new ArrayAdapter<String>(
+//                    context,
+//                    R.layout.z_simple_spinner_item_ltr,
+//                    month
+//            );
+//            From.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+//            txtEditFrommonth.setAdapter(Frommonth);
+//
+//            ArrayAdapter<String> Tomonth = new ArrayAdapter<String>(
+//                    context,
+//                    R.layout.z_simple_spinner_item_ltr,
+//                    month
+//            );
+//            To.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+//            txtEditTomonth.setAdapter(Tomonth);
+        }
+
         for (int i=0;i<txtEditFrom.getCount();i++){
             if (txtEditFrom.getItemAtPosition(i).toString().equalsIgnoreCase(jobFrom)){
                 txtEditFrom.setSelection(i,true);
@@ -139,12 +257,23 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
         ImageButton btnEdit = dialog.findViewById(R.id.btnEditDialogJob);
         DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
         int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
+        context = LocaleHelper.setLocale(context, language);
+        resources = context.getResources();
+        txtjobtitle.setText(resources.getString(R.string.JobTitle2));
+        txtpost.setText(resources.getString(R.string.post));
+        txtcompany.setText(resources.getString(R.string.Company));
+        txtFrom.setText(resources.getString(R.string.From));
+        txtuntil.setText(resources.getString(R.string.until));
 
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Job job = new Job(txtEditJobtitle.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString());
+                Job job = new Job(txtEditJobtitle.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),"",txtEditCompany.getText().toString(),
+                        "","","" );
+
+//                Job job = new Job(txtEditJobtitle.getText().toString(),txtEditFrom.getSelectedItem().toString(),txtEditTo.getSelectedItem().toString(),txtEditRole.getText().toString(),txtEditCompany.getText().toString(),
+//                       "",txtEditFrommonth.getSelectedItem().toString(),txtEditTomonth.getSelectedItem().toString() );
+                job.setId(id);
                 list.set(index,job);
                 notifyDataSetChanged();
                 dialog.dismiss();
@@ -176,7 +305,7 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
 
     private String updateLanguage(){
         //Default language is fa
-        String language = Paper.book().read("language");
+        language = Paper.book().read("language");
         if(language==null)
             Paper.book().write("language", "fa");
         return language;
@@ -204,4 +333,17 @@ public class ListAdapterJobs extends BaseAdapter implements ListAdapter {
             }
         }
     }
+    private void setLists(){
+        Persian_Date_Methods pd = new Persian_Date_Methods(language);
+        if(language.equals("fa")){
+            years = pd.get_persian_years();
+            month = pd.get_persian_month();
+        }
+        else{
+            years = pd.get_gregorian_years();
+            month = pd.get_gregorian_months();
+        }
+
+    }
+
 }

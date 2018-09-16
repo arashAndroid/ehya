@@ -3,10 +3,12 @@ package com.mrehya;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -15,7 +17,12 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.mrehya.Helper.LocaleHelper;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import io.paperdb.Paper;
 
 /**
  * Created by Rubick on 2/15/2018.
@@ -26,6 +33,7 @@ public class ListAdapterJobcat extends BaseAdapter implements ListAdapter {
     private Context context;
     private Activity activity;
     private ListView listView;
+    private String language="fa";
 
 
     public ListAdapterJobcat(ArrayList<String> list, Context context, Activity activity, ListView listView) {
@@ -100,6 +108,21 @@ public class ListAdapterJobcat extends BaseAdapter implements ListAdapter {
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
+
+        Resources resources = context.getResources();
+        ArrayAdapter<String> Jobcatadapter = new ArrayAdapter<String>(
+                context,
+                android.R.layout.simple_spinner_dropdown_item,
+                Arrays.asList(resources.getStringArray(R.array.job_status_arrays)));
+        updateLanguage();
+        if(language.equals("fa")) {
+            Jobcatadapter.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+        }
+        else{
+            Jobcatadapter.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+        }
+        spinnerLang.setAdapter(Jobcatadapter);
+
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,5 +158,13 @@ public class ListAdapterJobcat extends BaseAdapter implements ListAdapter {
         par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
         listView.setLayoutParams(par);
         listView.requestLayout();
+    }
+
+    private String updateLanguage(){
+        //Default language is fa
+        language = Paper.book().read("language");
+        if(language==null)
+            Paper.book().write("language", "fa");
+        return language;
     }
 }

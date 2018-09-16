@@ -3,11 +3,13 @@ package com.mrehya;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -20,6 +22,9 @@ import android.widget.TextView;
 import com.mrehya.Helper.LocaleHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
 
 import io.paperdb.Paper;
 
@@ -30,10 +35,11 @@ import io.paperdb.Paper;
 public class ListAdapterLang extends BaseAdapter implements ListAdapter {
     private ArrayList<Lang> list = new ArrayList<>();
     private Context context;
+    private Resources resources;
     private Activity activity;
     private ListView listView;
-
-
+    private String language="fa";
+    private List<String> levels, names;
     //new
     LinearLayout LinearLayoutitemlang1;
 
@@ -42,6 +48,13 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
         this.context = context;
         this.activity = activity;
         this.listView = listView;
+
+
+        updateLanguage();
+        context = LocaleHelper.setLocale(this.context  , language);
+        resources = context.getResources();
+        levels = Arrays.asList(resources.getStringArray(R.array.langLevels));
+        names =   Arrays.asList(resources.getStringArray(R.array.langs));
     }
 
     @Override
@@ -72,10 +85,20 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
         }
         Lang lang = list.get(position);
         //Handle TextView and display string from your list
-        final TextView listItemText = (TextView)view.findViewById(R.id.txtLang);
+        final TextView txtLang = (TextView)view.findViewById(R.id.txtLang);
         final TextView txtLangLevel = (TextView)view.findViewById(R.id.txtLangLevel);
-        listItemText.setText(lang.getName());
-        txtLangLevel.setText(lang.getLevel());
+        if(Integer.parseInt(lang.getName())==0){
+            txtLang.setText(names.get(0));
+        }
+        else{
+            txtLang.setText(names.get(Integer.parseInt(lang.getName())-1));
+        }
+        if(Integer.parseInt(lang.getLevel())==0) {
+            txtLangLevel.setText(0);
+        }
+        else{
+            txtLangLevel.setText(levels.get(Integer.parseInt(lang.getLevel())-1));
+        }
         //Handle buttons and add onClickListeners
         ImageButton btnDelete =view.findViewById(R.id.btnDeleteLang);
         ImageButton btnEdit = view.findViewById(R.id.btnEditLang);
@@ -96,7 +119,7 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
                 //do something
                 Lang lang = list.get(position);
 
-                showDialog(lang.getName(),lang.getLevel(),position);
+                showDialog(lang.getId(), lang.getName(), lang.getLevel(),position);
                 notifyDataSetChanged();
             }
         });
@@ -106,7 +129,7 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
         //updateView(updateLanguage());
         return view;
     }
-    private void showDialog(String oldItem,String oldItemLevel, final int index){
+    private void showDialog(final int Id, String oldItem, String oldItemLevel, final int index){
         final Dialog dialog = new Dialog(activity);
         dialog.setContentView(R.layout.list_dialog_lang);
         //final EditText txtEdit = dialog.findViewById(R.id.txtEditDialogLang);
@@ -114,9 +137,47 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
         //txtEdit.setText(oldItem);
         final Spinner spinnerLang = dialog.findViewById(R.id.spinnerLang);
         ImageButton btnEdit = dialog.findViewById(R.id.btnEditDialogLang);
+
+
+        if(language.equals("fa")){
+            ArrayAdapter<String> Leveladapter = new ArrayAdapter<String>(
+                    context,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    resources.getStringArray(R.array.langLevels)
+            );
+            Leveladapter.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+            spinner.setAdapter(Leveladapter);
+
+            ArrayAdapter<String> Langadapter = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_rtl,
+                    resources.getStringArray(R.array.langs)
+            );
+            Langadapter.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_rtl);
+            spinnerLang.setAdapter(Langadapter);
+        }
+        else
+        {
+            ArrayAdapter<String> Leveladapter = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_ltr,
+                    resources.getStringArray(R.array.langLevels)
+            );
+            Leveladapter.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+            spinner.setAdapter(Leveladapter);
+
+            ArrayAdapter<String> Langadapter = new ArrayAdapter<String>(
+                    context,
+                    R.layout.z_simple_spinner_item_ltr,
+                    resources.getStringArray(R.array.langs)
+            );
+            Langadapter.setDropDownViewResource(R.layout.z_simple_spinner_dropdown_item_ltr);
+            spinnerLang.setAdapter(Langadapter);
+        }
+
+
         DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
         int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
         for (int i=0;i<spinner.getCount();i++){
             if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(oldItemLevel)){
                 spinner.setSelection(i,true);
@@ -127,7 +188,9 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View view) {
                 //Lang lang = new Lang(txtEdit.getText().toString(),spinner.getSelectedItem().toString());
-                Lang lang = new Lang(spinnerLang.getSelectedItem().toString(),spinner.getSelectedItem().toString());
+                Lang lang = new Lang((names.indexOf( spinnerLang.getSelectedItem().toString())+1)+""
+                        ,(levels.indexOf(spinner.getSelectedItem().toString())+1)+"");
+                lang.setId(Id);
                 list.set(index,lang);
                 notifyDataSetChanged();
                 dialog.dismiss();
@@ -156,15 +219,13 @@ public class ListAdapterLang extends BaseAdapter implements ListAdapter {
         listView.setLayoutParams(par);
         listView.requestLayout();
     }
-
     private String updateLanguage(){
         //Default language is fa
-        String language = Paper.book().read("language");
+        language = Paper.book().read("language");
         if(language==null)
             Paper.book().write("language", "fa");
         return language;
     }
-
     private void updateView(String language) {
         Context context = LocaleHelper.setLocale(this.context  , language);
 

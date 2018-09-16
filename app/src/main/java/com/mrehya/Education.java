@@ -16,6 +16,14 @@ public class Education {
         this.grade = grade;
     }
 
+    public Education(String field, String place, String from, String to) {
+        this.field = field;
+        this.place = place;
+        this.from = from;
+        this.to = to;
+        this.grade = grade;
+    }
+
     public Education(String grade, int id, String field, String place, String from, String to) {
 
         this.id = id;

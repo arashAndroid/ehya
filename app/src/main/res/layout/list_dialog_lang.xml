@@ -14,19 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/LinearLayout1"
-        android:orientation="horizontal"
+        android:id="@+id/LinearLayoutmain"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layoutDirection="rtl">
-        <ImageButton
-            android:id="@+id/btnEditDialogLang"
-            android:paddingRight="15dp"
-            android:paddingLeft="15dp"
-            android:background="@null"
-            android:src="@drawable/ic_checkmark"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+
 
         <Spinner
             android:id="@+id/spinnerLang"
@@ -35,10 +28,10 @@
             android:paddingBottom="15dp"
             android:paddingRight="10dp"
             android:entries="@array/langs"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <Spinner
             android:id="@+id/spinnerLangLevel"
@@ -47,11 +40,18 @@
             android:paddingBottom="15dp"
             android:paddingRight="10dp"
             android:entries="@array/langLevels"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="center"/>
-
+        <ImageButton
+            android:id="@+id/btnEditDialogLang"
+            android:background="@null"
+            android:src="@drawable/ic_checkmark"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:padding="15dp"/>
 
 
     </LinearLayout>

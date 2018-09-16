@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:gravity="center"
     android:layout_height="match_parent"
-    tools:context="com.mrehya.Test">
+    tools:context="com.mrehya.Exams.Test">
 
     <LinearLayout
         android:padding="20dp"
@@ -13,23 +13,20 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
         <RelativeLayout
             android:background="@drawable/stroke_bg"
             android:gravity="center_vertical"
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
             <TextView
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/txtNumber"
                 android:layout_marginRight="10dp"
-                android:textSize="@dimen/textSize1"
+                android:padding="2dp"
+                android:textSize="15dp"
                 android:id="@+id/txtQuestions"
-                android:text="شسبشسب"
+                android:text=""
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -42,47 +39,76 @@
                 android:background="@color/LanguageBG"
                 android:textColor="@color/textColorWhite"
                 android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_height="70dp"
+                android:minHeight="70dp"/>
         </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/LinearLayouttextViews"
+        android:background="@drawable/stroke_bg"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="عنوان"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/tv_point"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/tv_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_margin="10dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_alignParentLeft="true"
+            android:id="@+id/btn_Back"
+            android:padding="3dp"
+            android:layout_margin="5dp"
+            android:text="برگشت"
+            android:textSize="@dimen/textSize1"
+            android:drawableRight="@drawable/ic_back_white"
+            android:textColor="@color/textColorWhite"
+            android:background="@drawable/back_btn_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:visibility="gone"/>
+    </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/LinearLayoutRadios"
             android:background="@drawable/stroke_bg"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <RadioButton 
-                android:padding="15dp"
-            android:text="گزینه1"
-            android:id="@+id/option1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-            <RadioButton
-                android:padding="15dp"
-                android:text="گزینه2"
-                android:id="@+id/option2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:padding="15dp"
-                android:text="گزینه3"
-                android:id="@+id/option3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:padding="15dp"
-                android:text="گزینه4"
-                android:id="@+id/option4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <RadioButton
-                android:padding="15dp"
-                android:text="گزینه5"
-                android:id="@+id/option5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
         </LinearLayout>
         
         <LinearLayout

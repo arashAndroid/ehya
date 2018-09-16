@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.mrehya.Helper.LocaleHelper;
+import com.mrehya.Reserv.Reserve;
 
 import java.util.ArrayList;
 import java.util.List;

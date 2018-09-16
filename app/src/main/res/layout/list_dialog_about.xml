@@ -17,15 +17,6 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageButton
-            android:id="@+id/btnEditDialogAbout"
-            android:paddingRight="15dp"
-            android:paddingLeft="15dp"
-            android:background="@null"
-            android:src="@drawable/ic_checkmark"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-
         <EditText
             android:id="@+id/txtEditDialogAbout"
             android:layout_gravity="center"
@@ -35,7 +26,42 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginBottom="15dp">
 
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:background="@color/flatButton"
+            android:textColor="@color/textColorWhite"
+            android:textSize="15dp"
+            android:text="برگشت"/>
+        <Button
+            android:id="@+id/btn_saveresume"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:background="#949494"
+            android:textColor="@color/textColorWhite"
+            android:textSize="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="ذخیره"/>
 
     </LinearLayout>
 </LinearLayout>

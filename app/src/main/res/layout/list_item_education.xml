@@ -6,25 +6,10 @@
     android:layout_height="match_parent">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
+        android:id="@+id/LinearLayouttop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:background="@null"
-            android:id="@+id/btnDeleteEducation"
-            android:src="@drawable/ic_delete"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        <ImageButton
-            android:background="@null"
-            android:id="@+id/btnEditEducation"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/ic_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layoutDirection="rtl">
         <TextView
             android:id="@+id/txtEducationTitle"
             android:gravity="right|center"
@@ -36,28 +21,45 @@
             android:layout_width="0dp"
             android:layout_weight="0.7"
             android:layout_height="wrap_content" />
-
+        <ImageButton
+            android:background="@null"
+            android:id="@+id/btnEditEducation"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <ImageButton
+            android:background="@null"
+            android:id="@+id/btnDeleteEducation"
+            android:src="@drawable/ic_delete"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/LinearLayoutbot"
         android:layout_marginRight="10dp"
         android:gravity="right"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layoutDirection="rtl">
         <TextView
-            android:id="@+id/txtEducationTo"
-            android:layout_marginLeft="10dp"
-            android:textSize="@dimen/textSize2"
+            android:id="@+id/txtEducationCompany"
+            android:layout_marginLeft="30dp"
+            android:textSize="@dimen/textSize1"
             android:textColor="@color/textColorBlack"
-            android:text="۱۳۹۰"
+            android:text="نما اندیشان"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <TextView
-            android:layout_marginLeft="10dp"
+            android:id="@+id/txtaz"
             android:textSize="@dimen/textSize2"
             android:textColor="@color/textColorBlack"
-            android:text="تا"
+            android:text="از"
+            android:layout_marginLeft="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
@@ -68,20 +70,20 @@
             android:text="۱۳۹۰"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <TextView
+            android:id="@+id/txtta"
+            android:layout_marginLeft="10dp"
             android:textSize="@dimen/textSize2"
             android:textColor="@color/textColorBlack"
-            android:text="از"
-            android:layout_marginLeft="15dp"
+            android:text="تا"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/txtEducationCompany"
-            android:layout_marginLeft="30dp"
-            android:textSize="@dimen/textSize1"
+            android:id="@+id/txtEducationTo"
+            android:layout_marginLeft="10dp"
+            android:textSize="@dimen/textSize2"
             android:textColor="@color/textColorBlack"
-            android:text="نما اندیشان"
+            android:text="۱۳۹۰"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

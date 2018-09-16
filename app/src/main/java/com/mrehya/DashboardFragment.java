@@ -4,11 +4,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -19,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +33,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.mrehya.DashboardPackage.DashboardLists;
+import com.mrehya.Exams.Test;
 import com.mrehya.Helper.LocaleHelper;
+import com.mrehya.Hire.HireCompanies;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,11 +56,10 @@ public class DashboardFragment extends Fragment {
     //new
     private MyTextView mytextPsycoTest,mytextHireBestCompanies,
             mytextPsycoTests1,mytextPsycoTests2,mytextPsycoTests3,mytextPsycoTests4,mytextPsycoTests5,mytextPsycoTests6;
-    private String Language;
+    private String Language="fa";
 
     private ImageView imgViewE1,imgViewE2,imgViewE3,imgViewE4,imgViewE5,imgViewE6;
-    private TextView txtQnums1,txtQnums2,txtQnums3,txtQnums4,txtQnums5,txtQnums6;
-
+    private Boolean show = true;
 
     private TextView txtEmptyExams;
 
@@ -63,24 +69,25 @@ public class DashboardFragment extends Fragment {
     Context context;
     RelativeLayout test1,test2,test3,test4,test5,test6 ;
 
-    //
     private ProgressDialog pDialog;
     private TextView txtEmptyCompanies;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        context =view.getContext();
+        Paper.init(context);
+        Language = (String) Paper.book().read("language");
+        //context = LocaleHelper.setLocale(context, Language);
+        DashboardLists dl = new DashboardLists(context, false);
         test1 = (RelativeLayout) view.findViewById(R.id.test1);
         test2 = (RelativeLayout) view.findViewById(R.id.test2);
         test3 = (RelativeLayout) view.findViewById(R.id.test3);
         test4 = (RelativeLayout) view.findViewById(R.id.test4);
         test5 = (RelativeLayout) view.findViewById(R.id.test5);
         test6 = (RelativeLayout) view.findViewById(R.id.test6);
-        context =view.getContext();
+
         pDialog = new ProgressDialog(context);
         setToSquare(test1);
         setToSquare(test2);
@@ -88,25 +95,24 @@ public class DashboardFragment extends Fragment {
         setToSquare(test4);
         setToSquare(test5);
         setToSquare(test6);
-
-        // new
         txtEmptyExams = (TextView) view.findViewById(R.id.txtEmptyExams);
-        //new
-        Paper.init(context);
-        Language = updateLanguage();
-
         companyList = new ArrayList<>();
         adapter = new dashAdapter(getContext(), companyList);
-
-
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.removeAllViews();
         RecyclerView.LayoutManager mLayoutManager;
         if(Language.equals("fa")) {
             mLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.HORIZONTAL, true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+            }
+
         }
         else{
             mLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.HORIZONTAL, false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                recyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            }
         }
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(2), true));
@@ -132,22 +138,383 @@ public class DashboardFragment extends Fragment {
         imgViewE5 = view.findViewById(R.id.imgViewE5);
         imgViewE6 = view.findViewById(R.id.imgViewE6);
 
-        txtQnums1 = (TextView) view.findViewById(R.id.txtQnums1);
-        txtQnums2 = (TextView) view.findViewById(R.id.txtQnums2);
-        txtQnums3 = (TextView) view.findViewById(R.id.txtQnums3);
-        txtQnums4 = (TextView) view.findViewById(R.id.txtQnums4);
-        txtQnums5 = (TextView) view.findViewById(R.id.txtQnums5);
-        txtQnums6 = (TextView) view.findViewById(R.id.txtQnums6);
-
         //new
-        updateView((String) Paper.book().read("language"));
-        prepareCompanies();
-        Exam_Api(Language);
+        updateView();
+
+        startDialog();
+        new ApiTask(context).execute(0);
         return view;
     }
+    class ApiTask extends AsyncTask<Integer, Integer, String> {
+        private Context context2;
+        public ApiTask(Context context) {
+            this.context2=context;
+        }
 
+        @Override
+        protected String doInBackground(Integer... params) {
+            try {
+                Thread.sleep(300);
+                // some long running task will run here. We are using sleep as a dummy to delay execution
+                set_Content(context2);
+                set_Content_Company(context2);
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return "Task Completed.";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            hideDialog();
+        }
+        @Override
+        protected void onPreExecute() {
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+        }
+    }
+    //EXAM
+    public void set_Content(final Context context) throws JSONException {
+         getActivity().runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    JSONObject data = DashboardLists.Testsdata;
+        if(data.length()>0){
+            txtEmptyExams.setVisibility(View.GONE);
+            Show_Hide_Exams(true);
+            Random rand = new Random();
+            int length = data.length()-1;
+            if(length>6){
+                length=6;
+            }
+            List<Integer> Seen_examsList = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                int number = 0;
+                do {
+                    number=rand.nextInt(data.length()-1);
+                }
+                while(Seen_examsList.contains(number));
+                final int take = number;
+                Seen_examsList.add(take);
+                final JSONObject c = data.getJSONObject(take+"");
+                //Log.d("Fragment part String: ", c.toString());
+
+
+                switch (i){
+                    case 0:
+                        if(Language.equals("fa"))
+                            mytextPsycoTests1.setText(c.getString("title"));
+                        else
+                            mytextPsycoTests1.setText(c.getString("title_en"));
+                        if(c.getJSONObject("image").getString("thumb").length()>1) {
+
+                            getActivity().runOnUiThread( new Runnable(){
+                                @Override
+                                public void run() {
+                                    try {
+                                        Glide.with(context)
+                                                .load(c.getJSONObject("image").getString("thumb"))
+                                                .asBitmap()
+                                                .placeholder(R.drawable.logo_eng)
+                                                .error(R.drawable.logo_eng)
+                                                .into(new BitmapImageViewTarget(imgViewE1)
+                                                      {
+                                                          @Override
+                                                          protected void setResource(Bitmap resource){
+                                                              super.setResource(resource);
+                                                          }
+                                                      }
+
+                                                );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }});
+                            mytextPsycoTests1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    send(take);
+                                }
+                            });
+                        }
+                        break;
+                    case 1:
+                        if(Language.equals("fa"))
+                            mytextPsycoTests2.setText(c.getString("title"));
+                        else
+                            mytextPsycoTests2.setText(c.getString("title_en"));
+                        if(c.getJSONObject("image").getString("thumb").length()>1)
+                        {
+                            getActivity().runOnUiThread( new Runnable(){
+                                @Override
+                                public void run() {
+                                    try {
+                                        Glide.with(context)
+                                                .load(c.getJSONObject("image").getString("thumb"))
+                                                .asBitmap()
+                                                .placeholder(R.drawable.logo_eng)
+                                                .error(R.drawable.logo_eng)
+                                                .into(new BitmapImageViewTarget(imgViewE2) {
+                                                          @Override
+                                                          protected void setResource(Bitmap resource){
+                                                              super.setResource(resource);
+                                                          }
+                                                      }
+                                                );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
+                            mytextPsycoTests2.setOnClickListener(new View.OnClickListener(){
+                                @Override
+                                public void onClick(View v) {
+                                    send(take);
+                                }
+                            });
+                        }
+                        break;
+                    case 2:
+                        if(Language.equals("fa"))
+                            mytextPsycoTests3.setText(c.getString("title"));
+                        else
+                            mytextPsycoTests3.setText(c.getString("title_en"));
+                        if(c.getJSONObject("image").getString("thumb").length()>1) {
+
+                            getActivity().runOnUiThread( new Runnable(){
+                                @Override
+                                public void run() {
+                                    try {
+                                        Glide.with(context)
+                                                .load(c.getJSONObject("image").getString("thumb"))
+                                                .asBitmap()
+                                                .placeholder(R.drawable.logo_eng)
+                                                .error(R.drawable.logo_eng)
+                                                .into(new BitmapImageViewTarget(imgViewE3)             {
+                                                          @Override
+                                                          protected void setResource(Bitmap resource){
+                                                              super.setResource(resource);
+                                                          }
+                                                      }
+                                                );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }});
+
+
+                            mytextPsycoTests3.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    send(take);
+                                }
+                            });
+                        }
+                        break;
+                    case 3:
+                        if(Language.equals("fa"))
+                            mytextPsycoTests4.setText(c.getString("title"));
+                        else
+                            mytextPsycoTests4.setText(c.getString("title_en"));
+                        if(c.getJSONObject("image").getString("thumb").length()>1) {
+
+                            getActivity().runOnUiThread( new Runnable(){
+                                @Override
+                                public void run() {
+                                    try {
+                                        Glide.with(context)
+                                                .load(c.getJSONObject("image").getString("thumb"))
+                                                .asBitmap()
+                                                .placeholder(R.drawable.logo_eng)
+                                                .error(R.drawable.logo_eng)
+                                                .into(new BitmapImageViewTarget(imgViewE4)             {
+                                                          @Override
+                                                          protected void setResource(Bitmap resource){
+                                                              super.setResource(resource);
+                                                          }
+                                                      }
+                                                );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }});
+
+
+                            mytextPsycoTests4.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    send(take);
+                                }
+                            });
+                        }
+                        break;
+                    case 4:
+                        if(Language.equals("fa"))
+                            mytextPsycoTests5.setText(c.getString("title"));
+                        else
+                            mytextPsycoTests5.setText(c.getString("title_en"));
+                        if(c.getJSONObject("image").getString("thumb").length()>1) {
+                            getActivity().runOnUiThread( new Runnable(){
+                                @Override
+                                public void run() {
+                                    try {
+                                        Glide.with(context)
+                                                .load(c.getJSONObject("image").getString("thumb"))
+                                                .asBitmap()
+                                                .placeholder(R.drawable.logo_eng)
+                                                .error(R.drawable.logo_eng)
+                                                .into(new BitmapImageViewTarget(imgViewE5)             {
+                                                          @Override
+                                                          protected void setResource(Bitmap resource){
+                                                              super.setResource(resource);
+                                                          }
+                                                      }
+                                                );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }});
+                            mytextPsycoTests5.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    send(take);
+                                }
+                            });
+                        }
+                        break;
+                    case 5:
+                        if(Language.equals("fa"))
+                            mytextPsycoTests6.setText(c.getString("title"));
+                        else
+                            mytextPsycoTests6.setText(c.getString("title_en"));
+                        if(c.getJSONObject("image").getString("thumb").length()>1) {
+                            getActivity().runOnUiThread( new Runnable(){
+                                @Override
+                                public void run() {
+                                    try {
+                                        Glide.with(context)
+                                                .load(c.getJSONObject("image").getString("thumb"))
+                                                .asBitmap()
+                                                .placeholder(R.drawable.logo_eng)
+                                                .error(R.drawable.logo_eng)
+                                                .into(new BitmapImageViewTarget(imgViewE6)             {
+                                                          @Override
+                                                          protected void setResource(Bitmap resource){
+                                                              super.setResource(resource);
+                                                          }
+                                                      }
+                                                );
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }});
+                            mytextPsycoTests6.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    send(take);
+                                }
+                            });
+                        }
+                        break;
+                    default:
+                        Log.d("no more", c.toString());
+                }
+
+            }
+        }
+        else{
+            Show_Hide_Exams(false);
+            if(Language.equals("fa"))
+                txtEmptyExams.setText("لیست آزمون ها خالی است");
+            else
+                txtEmptyExams.setText("Empty Hire Advertisements!");
+            txtEmptyExams.setVisibility(View.VISIBLE);
+        }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }});
+    }
+    public void Show_Hide_Exams(boolean show){
+        if(show){
+            test1.setVisibility(View.VISIBLE);
+            test2.setVisibility(View.VISIBLE);
+            test3.setVisibility(View.VISIBLE);
+            test4.setVisibility(View.VISIBLE);
+            test5.setVisibility(View.VISIBLE);
+            test6.setVisibility(View.VISIBLE);
+        }
+        else{
+            test1.setVisibility(View.GONE);
+            test2.setVisibility(View.GONE);
+            test3.setVisibility(View.GONE);
+            test4.setVisibility(View.GONE);
+            test5.setVisibility(View.GONE);
+            test6.setVisibility(View.GONE);
+        }
+    }
+    public void send(int pos) {
+        Intent intent = new Intent(this.getActivity(),Test.class);
+        intent.putExtra("examId",pos);
+        context.startActivity(intent);
+    }
+    //COMPANY
+    public void set_Content_Company(Context context) throws JSONException {
+        getActivity().runOnUiThread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                       JSONObject data = DashboardLists.Companiesdata;
+                        if(data.length()>0){
+                            txtEmptyCompanies.setVisibility(View.GONE);
+                            //check language to add item to list
+                            if(Language.equals("fa")) {
+                                for (int i = 0; i < data.length() - 1; i++) {
+                                    JSONObject c = data.getJSONObject(i + "");
+                                    HireCompanies a = new HireCompanies(c.getString("brand_name"), c.getString("image"));
+                                    companyList.add(a);
+                                }
+                            }
+                            else{
+                                for (int i = 0; i < data.length() - 1; i++) {
+                                    JSONObject c = data.getJSONObject(i + "");
+                                    HireCompanies a = new HireCompanies(c.getString("brand_name"), c.getString("image"));
+                                    companyList.add(a);
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                        else{
+                            if(Language.equals("fa"))
+                                txtEmptyCompanies.setText("لیست شرکت\u200Cها خالی است");
+                            else
+                                txtEmptyCompanies.setText("Empty Companies List!");
+                            txtEmptyCompanies.setVisibility(View.VISIBLE);
+                        }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }});
+    }
+
+
+
+    //methods
     private void setToSquare(View mLayout){
-
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels;
         float dpWidth = displayMetrics.widthPixels ;
@@ -159,7 +526,6 @@ public class DashboardFragment extends Fragment {
 
         mLayout.setLayoutParams(layoutparams);
     }
-
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
         private int spanCount;
@@ -194,41 +560,22 @@ public class DashboardFragment extends Fragment {
             }
         }
     }
-
-    /**
-     * Converting dp to pixel
-     */
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
-
-    private String updateLanguage(){
-        //Default language is fa
-        String language = Paper.book().read("language");
-        if(language==null)
-            Paper.book().write("language", "fa");
-        return language;
-    }
-    private void updateView(String language) {
-        Context context = LocaleHelper.setLocale(getActivity(), language);
+    private void updateView() {
+        Context context = LocaleHelper.setLocale(getActivity(), Language);
         Resources resources = context.getResources();
 
         mytextPsycoTest.setText(resources.getString(R.string.PsycoTest));
         mytextHireBestCompanies.setText(resources.getString(R.string.HireBestCompanies));
 
-
-        if(Language.equals("fa")){
-            Context context2= LocaleHelper.setLocale(getActivity(), "en");
-        }
-
     }
-
-    //Progress Dialog
     private void startDialog(){
         pDialog.setCancelable(true);
         if(Language.equals("fa"))
-            pDialog.setMessage("در حال اتصال...");
+            pDialog.setMessage("در حال بارگزاری...");
         else
             pDialog.setMessage("Loading Companies...");
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -242,360 +589,4 @@ public class DashboardFragment extends Fragment {
         if (pDialog.isShowing())
             pDialog.dismiss();
     }
-
-
-    private void Exam_Api(final String Language){
-        startDialog();
-        String tag_string_req = "req_Exams";
-        StringRequest strReq = new StringRequest(Request.Method.GET,
-                AppConfig.URL_DashExam+"2", new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d("TAG", "Exams Response: " + response.toString());
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    JSONObject data = jObj.getJSONObject("data");
-                    if(data.length()>0){
-                        txtEmptyExams.setVisibility(View.GONE);
-                        Show_Hide_Exams(true);
-                        set_Content(data);
-                        //adapter.notifyDataSetChanged();
-                    }
-                    else{
-                        Show_Hide_Exams(false);
-                        if(Language.equals("fa"))
-                            txtEmptyExams.setText("لیست آزمون\u200Cها خالی است!");
-                        else
-                            txtEmptyExams.setText("Empty Hire Advertisements!");
-                        txtEmptyExams.setVisibility(View.VISIBLE);
-                    }
-                    Log.d("TAG", "No Object recieved!");
-                    hideDialog();
-                } catch (JSONException e) {
-                    // JSON error
-                    Log.d("TAG", "error 1 " + e.getMessage());
-                    //e.printStackTrace();
-                    Show_Hide_Exams(false);
-                    if(Language.equals("fa")){
-                        txtEmptyExams.setText("لیست آزمون\u200Cها خالی است");
-                        Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                    }
-
-                    else{
-                        txtEmptyExams.setText("Empty Hire Advertisements!");
-                        Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-                    }
-                    txtEmptyExams.setVisibility(View.VISIBLE);
-
-                    hideDialog();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Show_Hide_Exams(false);
-                Log.e("TAG",  "error2");
-                if(Language.equals("fa")){
-                    txtEmptyExams.setText("لیست آزمون\u200Cها خالی است");
-                    Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                }
-
-                else{
-                    txtEmptyExams.setText("Empty Hire Advertisements!");
-                    Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-                }
-                txtEmptyExams.setVisibility(View.VISIBLE);
-                hideDialog();
-            }
-        }) {
-            //basic auth
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> headers = new HashMap<String, String>();
-                // add headers <key,value>
-                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.URL_SAFE|Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-    //CHECK DATA.LENGTH NEED -1
-    public void set_Content(JSONObject data) throws JSONException {
-
-        Random rand = new Random();
-        int length = data.length()-1;
-        if(length>6){
-            length=6;
-        }
-        List<Integer> Seen_examsList = new ArrayList<>();
-        for (int i = 0; i < length; i++) {
-            int number = 0;
-            do {
-                number=rand.nextInt(data.length()-1);
-            }
-            while(Seen_examsList.contains(number));
-            final int take = number;
-            Seen_examsList.add(take);
-            JSONObject c = data.getJSONObject(take+"");
-            Log.d("Fragment part String: ", c.toString());
-            switch (i){
-                case 0:
-                    if(Language.equals("fa"))
-                        mytextPsycoTests1.setText(c.getString("title"));
-                    else
-                        mytextPsycoTests1.setText(c.getString("title_en"));
-                    txtQnums1.setText(c.getString("price"));
-                    if(c.getJSONObject("image").getString("thumb").length()>1) {
-                        Glide.with(context)
-                                .load(c.getJSONObject("image").getString("thumb"))
-                                .placeholder(R.drawable.logo_eng)
-                                .error(R.drawable.logo_eng)
-                                .into(imgViewE1);
-                        mytextPsycoTests1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                send(take);
-                            }
-                        });
-                    }
-                    break;
-                case 1:
-                    if(Language.equals("fa"))
-                        mytextPsycoTests2.setText(c.getString("title"));
-                    else
-                        mytextPsycoTests2.setText(c.getString("title_en"));
-                    txtQnums2.setText(c.getString("price"));
-                    if(c.getJSONObject("image").getString("thumb").length()>1)
-                    {
-                        Glide.with(context)
-                                .load(c.getJSONObject("image").getString("thumb"))
-                                .placeholder(R.drawable.logo_eng)
-                                .error(R.drawable.logo_eng)
-                                .into(imgViewE2);
-                        mytextPsycoTests2.setOnClickListener(new View.OnClickListener(){
-                            @Override
-                            public void onClick(View v) {
-                                send(take);
-                            }
-                        });
-                    }
-                    break;
-                case 2:
-                    if(Language.equals("fa"))
-                        mytextPsycoTests3.setText(c.getString("title"));
-                    else
-                        mytextPsycoTests3.setText(c.getString("title_en"));
-                    txtQnums3.setText(c.getString("price"));
-                    if(c.getJSONObject("image").getString("thumb").length()>1) {
-                        Glide.with(context)
-                                .load(c.getJSONObject("image").getString("thumb"))
-                                .placeholder(R.drawable.logo_eng)
-                                .error(R.drawable.logo_eng)
-                                .into(imgViewE3);
-                        mytextPsycoTests3.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                send(take);
-                            }
-                        });
-                    }
-                    break;
-                case 3:
-                    if(Language.equals("fa"))
-                        mytextPsycoTests4.setText(c.getString("title"));
-                    else
-                        mytextPsycoTests4.setText(c.getString("title_en"));
-                    txtQnums4.setText(c.getString("price"));
-                    if(c.getJSONObject("image").getString("thumb").length()>1) {
-                        Glide.with(context)
-                                .load(c.getJSONObject("image").getString("thumb"))
-                                .placeholder(R.drawable.logo_eng)
-                                .error(R.drawable.logo_eng)
-                                .into(imgViewE4);
-                        mytextPsycoTests4.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                send(take);
-                            }
-                        });
-                    }
-                    break;
-                case 4:
-                    if(Language.equals("fa"))
-                        mytextPsycoTests5.setText(c.getString("title"));
-                    else
-                        mytextPsycoTests5.setText(c.getString("title_en"));
-                    txtQnums5.setText(c.getString("price"));
-                    if(c.getJSONObject("image").getString("thumb").length()>1) {
-                        Glide.with(context)
-                                .load(c.getJSONObject("image").getString("thumb"))
-                                .placeholder(R.drawable.logo_eng)
-                                .error(R.drawable.logo_eng)
-                                .into(imgViewE5);
-                        mytextPsycoTests5.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                send(take);
-                            }
-                        });
-                    }
-                    break;
-                case 5:
-                    if(Language.equals("fa"))
-                        mytextPsycoTests6.setText(c.getString("title"));
-                    else
-                        mytextPsycoTests6.setText(c.getString("title_en"));
-                    txtQnums6.setText(c.getString("price"));
-                    if(c.getJSONObject("image").getString("thumb").length()>1) {
-                        Glide.with(context)
-                                .load(c.getJSONObject("image").getString("thumb"))
-                                .placeholder(R.drawable.logo_eng)
-                                .error(R.drawable.logo_eng)
-                                .into(imgViewE6);
-                        mytextPsycoTests6.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                send(take);
-                            }
-                        });
-                    }
-                    break;
-                default:
-                    Log.d("no more", c.toString());
-            }
-        }
-    }
-    //SHOW EXAMS OR GONE THEM
-    public void Show_Hide_Exams(boolean show){
-        if(show){
-            test1.setVisibility(View.VISIBLE);
-            test2.setVisibility(View.VISIBLE);
-            test3.setVisibility(View.VISIBLE);
-            test4.setVisibility(View.VISIBLE);
-            test5.setVisibility(View.VISIBLE);
-            test6.setVisibility(View.VISIBLE);
-        }
-        else{
-            test1.setVisibility(View.GONE);
-            test2.setVisibility(View.GONE);
-            test3.setVisibility(View.GONE);
-            test4.setVisibility(View.GONE);
-            test5.setVisibility(View.GONE);
-            test6.setVisibility(View.GONE);
-        }
-    }
-    //send or intent to exam which we just meant!
-    public void send(int pos) {
-        Intent intent = new Intent(this.getActivity(),Test.class);
-        intent.putExtra("examId",pos);
-        context.startActivity(intent);
-    }
-
-
-    private void prepareCompanies() {
-        String tag_string_req = "req_Companies";
-        StringRequest strReq = new StringRequest(Request.Method.GET,
-                AppConfig.URL_Hires, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d("TAG", "Company Response: " + response.toString());
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    JSONObject data = jObj.getJSONObject("data");
-                    if(data.length()>0){
-                        txtEmptyCompanies.setVisibility(View.GONE);
-                        set_Content_Company(data);
-                    }
-                    else{
-                        if(Language.equals("fa"))
-                            txtEmptyCompanies.setText("لیست شرکت\u200Cها خالی است!\"");
-                        else
-                            txtEmptyCompanies.setText("Empty Companies List!");
-                        txtEmptyCompanies.setVisibility(View.VISIBLE);
-                    }
-                    Log.d("TAG", "No Object recieved!");
-                    hideDialog();
-                } catch (JSONException e) {
-                    // JSON error
-                    Log.d("TAG", "error 1 " + e.getMessage());
-                    //e.printStackTrace();
-                    Show_Hide_Exams(false);
-                    if(Language.equals("fa")){
-                        txtEmptyCompanies.setText("لیست شرکت\u200Cها خالی است");
-                        Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        txtEmptyCompanies.setText("Empty Companies List!");
-                        Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-                    }
-                    txtEmptyCompanies.setVisibility(View.VISIBLE);
-                    hideDialog();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Show_Hide_Exams(false);
-                Log.e("TAG",  "error2");
-                if(Language.equals("fa")){
-                    txtEmptyCompanies.setText("لیست شرکت\u200Cها خالی است");
-                    Toast.makeText(context, "مشکلی در اتصال با سرور پیش آمده است", Toast.LENGTH_SHORT).show();
-                }
-
-                else{
-                    txtEmptyCompanies.setText("Empty Companies List!");
-                    Toast.makeText(context, "Network Connection or Server failed!", Toast.LENGTH_SHORT).show();
-                }
-                txtEmptyCompanies.setVisibility(View.VISIBLE);
-                hideDialog();
-            }
-        }) {
-            //basic auth
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String,String> headers = new HashMap<String, String>();
-                // add headers <key,value>
-                String credentials = AppConfig.AUTH_USERNAME+":"+AppConfig.AUTH_PASS;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.URL_SAFE|Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
-            }
-
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-    public void set_Content_Company(JSONObject data) throws JSONException {
-        //check language to add item to list
-        if(Language.equals("fa")) {
-            for (int i = 0; i < data.length() - 1; i++) {
-                JSONObject c = data.getJSONObject(i + "");
-                HireCompanies a = new HireCompanies(c.getString("brand_name"), c.getString("image"));
-                companyList.add(a);
-            }
-        }
-        else{
-            for (int i = 0; i < data.length() - 1; i++) {
-                JSONObject c = data.getJSONObject(i + "");
-                HireCompanies a = new HireCompanies(c.getString("brand_name"), c.getString("image"));
-                companyList.add(a);
-            }
-        }
-            adapter.notifyDataSetChanged();
-    }
-
 }

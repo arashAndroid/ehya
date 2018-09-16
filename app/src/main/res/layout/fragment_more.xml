@@ -19,7 +19,7 @@
 
     </RelativeLayout>
     <LinearLayout
-        android:id="@+id/LinearLayoutmore1"
+        android:id="@+id/LinearLayoutmoreresume"
         android:layout_marginTop="5dp"
         android:layoutDirection="rtl"
         android:layout_width="match_parent"
@@ -28,14 +28,14 @@
         android:orientation="horizontal">
         <ImageView
             android:padding="5dp"
-            android:id="@+id/imageView1"
+            android:id="@+id/imageViewresume"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:src="@drawable/sakhteresum" />
         <Button
             android:paddingRight="10dp"
             android:paddingEnd="10dp"
-            android:id="@+id/makeResume"
+            android:id="@+id/Resumeshow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right|center"
@@ -46,10 +46,12 @@
             android:textColor="@color/textColorBlack"
             />
     </LinearLayout>
+
     <View
         android:background="@color/textColorGrey"
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
+
 
     <LinearLayout
         android:id="@+id/LinearLayoutmore2"
@@ -88,7 +90,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
         <ImageView
             android:padding="5dp"
             android:id="@+id/imageView3"

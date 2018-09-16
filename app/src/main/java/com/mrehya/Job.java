@@ -1,12 +1,14 @@
 package com.mrehya;
 
+import java.util.ArrayList;
+
 /**
  * Created by Rubick on 2/17/2018.
  */
 
 public class Job {
     int id;
-    String Jobtitle,role,company,from,to;
+    String Jobtitle,role,company,from,to, stillworking, frommonth, tomonth;
 
     public String getCompany() {
         return company;
@@ -16,13 +18,40 @@ public class Job {
         this.company = company;
     }
 
-    public Job(String Jobtitle, String from, String to, String role, String company) {
+    public String getStillworking() {
+        return stillworking;
+    }
 
+    public void setStillworking(String stillworking) {
+        this.stillworking = stillworking;
+    }
+
+    public String getFrommonth() {
+        return frommonth;
+    }
+
+    public void setFrommonth(String frommonth) {
+        this.frommonth = frommonth;
+    }
+
+    public String getTomonth() {
+        return tomonth;
+    }
+
+    public void setTomonth(String tomonth) {
+        this.tomonth = tomonth;
+    }
+
+    public Job(String Jobtitle, String from, String to, String role, String company, String stillworking,
+               String frommonth, String tomonth) {
         this.from = from;
         this.to = to;
         this.role = role;
         this.company = company;
         this.Jobtitle = Jobtitle;
+        this.stillworking= stillworking;
+        this.frommonth= frommonth;
+        this.tomonth= tomonth;
     }
 
     public Job(String Jobtitle, int id,String from, String to, String role, String company) {
@@ -33,6 +62,13 @@ public class Job {
         this.role = role;
         this.company = company;
         this.Jobtitle = Jobtitle;
+    }
+
+    public String getstillworking(){
+        return  stillworking;
+    }
+    public void setstillworking(String stillworking){
+        this.stillworking = stillworking;
     }
 
     public int getId() {

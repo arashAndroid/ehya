@@ -6,6 +6,8 @@ import android.content.*;
 import android.os.*;
 import android.support.v4.app.NotificationCompat;
 
+import com.mrehya.Resume.ResumeMainActivity;
+
 /**
  * Created by ashke on 3/1/2018.
  */
@@ -31,7 +33,7 @@ public class Alarm_BackgroundService extends Service  {
     private Runnable myTask = new Runnable() {
         public void run() {
             // Do something here
-            Intent i =  new Intent(context, MakeResume.class);
+            Intent i =  new Intent(context, ResumeMainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             PendingIntent pendingintent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);

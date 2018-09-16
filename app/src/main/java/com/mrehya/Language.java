@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.mrehya.DashboardPackage.DashboardLists;
+
 import java.util.Locale;
 
 import co.ronash.pushe.Pushe;
@@ -26,7 +28,7 @@ public class Language extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_language);
-
+        DashboardLists dl = new DashboardLists(this, true);
         Pushe.initialize(this,true);
         btnPersian = (Button) findViewById(R.id.btnPersian);
         imgBtnPersian = (ImageButton) findViewById(R.id.imgBtnPersian);
@@ -37,10 +39,9 @@ public class Language extends AppCompatActivity {
         btnPersian.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //select lang
                 Paper.book().write("language", "fa");
-
                 Intent intent = new Intent(Language.this,MainActivity.class);
+                intent.putExtra("Language", "fa");
                 startActivity(intent);
                 finish();
             }
@@ -55,6 +56,7 @@ public class Language extends AppCompatActivity {
                 Paper.book().write("language", "en");
 
                 Intent intent = new Intent(Language.this,MainActivity.class);
+                intent.putExtra("Language", "en");
                 startActivity(intent);
                 finish();
             }
